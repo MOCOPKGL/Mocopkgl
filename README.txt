@@ -1,35 +1,31 @@
-MOCO PKGL SCOREKEEPER V6
+MOCO PKGL SCOREKEEPER V7
 
-NEW SCORECARD WORKFLOW
-- Only the first-listed team in each matchup can enter and submit the score.
-- The second-listed team can open and review the scorecard but cannot edit it.
-- After final submission, the scorecard is locked.
-- The administrator can open, edit, and resubmit any scorecard.
-- The administrator can still edit schedules, pars, and course rules.
+NEW FEATURES
+- Redesigned professional mobile interface
+- MOCO PKGL app icon and Home Screen installation
+- Course emblems for Needwood, Northwest and Willow Springs
+- Directions button for every course
+- First-listed team enters and submits both teams' scores
+- Opponent can review but cannot edit
+- Final scores lock automatically
+- Admin can edit submitted scores
+- Automatic league standings
+- Team statistics: rounds, scoring average, total to par, birdies, pars, bogeys and doubles
+- Share final results through text/email using the phone's share menu
+- Editable schedules, pars and course rules
+- Export/import backup
 
-TEAM PINS
-Say Vadelay: 2146
-Czech's Mates: 3257
-Spackler: 4368
-Scaggs to the Flags: 5479
-Rip Tides: 6581
-Rippen from the Rough: 7692
-The Fossil Clan: 8713
-Colombian Crushers: 2453
-The Gophers: 1824
-Pancake Putters: 2935
-The Smails: 3046
-Basilio Bombers: 4157
+LOGIN
+Colombian Crushers PIN: 2453
+Admin PIN: 7315
 
-ADMIN PIN: 7315
-
-DEPLOY TO NETLIFY
+DEPLOY TO GITHUB / NETLIFY
 1. Unzip this package.
-2. Open your existing Netlify site.
-3. Go to Deploys.
-4. Drag the CONTENTS of the unzipped folder into the deployment area.
-5. Wait until it says Published.
-6. Open the site once in a private/incognito window.
+2. In GitHub, replace the old files with all files in this folder.
+3. Commit the changes.
+4. Netlify should redeploy automatically.
+5. If necessary, choose Deploy project without cache.
+6. Open https://mocopkgl.netlify.app in a private window once.
 
-IMPORTANT
-Data is still stored separately on each device. This controls who may edit on that device, but shared live scores across all phones still require a cloud database.
+IMPORTANT LIMITATION
+This version still stores scores separately on each phone or computer. For everyone to see the same scores and standings live, the app must be connected to a shared cloud database.
