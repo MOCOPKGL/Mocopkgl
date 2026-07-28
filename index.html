@@ -25,7 +25,7 @@ label{font-size:13px;font-weight:700;color:var(--muted)}input,select,button{font
   <div id="msg" class="muted"></div>
 </section>
 <section id="app" class="hidden">
-  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager()">Edit teams</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
+  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager()">Edit teams</button><button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
   <div id="who" class="banner"></div><div id="view"></div>
 </section>
 </main>
@@ -61,14 +61,14 @@ async function login(){
  catch(e){$('#msg').className='status error';$('#msg').textContent=e.message}
  finally{btn.disabled=false}
 }
-async function enter(){await refreshData(false);$('#login').classList.add('hidden');$('#app').classList.remove('hidden');$('#adminTeamsBtn').classList.toggle('hidden',!user.is_admin);$('#who').innerHTML=`Signed in as <b>${escapeHtml(user.team)}</b>${user.is_admin?' — Administrator':''}`;showSchedule();}
+async function enter(){await refreshData(false);$('#login').classList.add('hidden');$('#app').classList.remove('hidden');$('#adminTeamsBtn').classList.toggle('hidden',!user.is_admin);$('#adminCoursesBtn').classList.toggle('hidden',!user.is_admin);$('#who').innerHTML=`Signed in as <b>${escapeHtml(user.team)}</b>${user.is_admin?' — Administrator':''}`;showSchedule();}
 async function logout(){try{await rpc('pkgl_logout',{p_token:token})}catch{}localStorage.removeItem('pkgl_token');localStorage.removeItem('pkgl_user');location.reload();}
 async function refreshData(showMessage){
  try{D=await rpc('pkgl_bootstrap',{p_token:token});if(showMessage){renderCurrent();alert('Scores refreshed.')}}
  catch(e){if(/expired/i.test(e.message)){localStorage.clear();location.reload()}else throw e}
 }
 const course=id=>D.courses.find(c=>c.id===id), eventBy=id=>D.events.find(e=>e.id===id), total=a=>(a||[]).reduce((n,v)=>n+(Number(v)||0),0);
-function renderCurrent(){if(currentView.type==='event')showEvent(currentView.id);else if(currentView.type==='card')openCard(currentView.id);else if(currentView.type==='standings')showStandings();else if(currentView.type==='teams')showTeamManager();else showSchedule();}
+function renderCurrent(){if(currentView.type==='event')showEvent(currentView.id);else if(currentView.type==='card')openCard(currentView.id);else if(currentView.type==='standings')showStandings();else if(currentView.type==='teams')showTeamManager();else if(currentView.type==='courses')showCourseManager(currentView.id);else showSchedule();}
 function showSchedule(){currentView={type:'schedule'};$('#view').innerHTML=`<div class="grid">${D.events.map(e=>{const c=course(e.course_id),ms=D.matches.filter(m=>m.event_id===e.id),done=ms.filter(m=>m.status==='final').length;return `<div class="card event" onclick="showEvent('${e.id}')"><span class="pill">Event ${e.event_order}</span><h2>${escapeHtml(e.month_name)}</h2><b>${escapeHtml(c.name)}</b><p>${done} of ${ms.length} matches final</p><div class="muted">Tap to view matches</div></div>`}).join('')}</div>`;}
 function showEvent(id){currentView={type:'event',id};const e=eventBy(id),c=course(e.course_id),ms=D.matches.filter(m=>m.event_id===id);$('#view').innerHTML=`<button class="secondary" onclick="showSchedule()">← Back</button><div class="card"><h2>${escapeHtml(e.month_name)} — ${escapeHtml(c.name)}</h2>${ms.map(m=>{const final=m.status==='final';return `<div class="match"><div class="teams">${escapeHtml(m.home_team)} <span class="muted">vs.</span> ${escapeHtml(m.away_team)}</div><div class="result">${final?`${total(m.home_scores)}–${total(m.away_scores)} <span class="muted">Final</span>`:'Not submitted'}</div><button onclick="openCard('${m.id}')">${final?'View scorecard':'Open scorecard'}</button></div>`}).join('')}</div>`;}
 function openCard(id){currentView={type:'card',id};const m=D.matches.find(x=>x.id===id),e=eventBy(m.event_id),c=course(e.course_id);const canEdit=user.is_admin||(user.team_id===m.home_team_id&&m.status!=='final');const hs=[...(m.home_scores||[])],as=[...(m.away_scores||[])];while(hs.length<9)hs.push('');while(as.length<9)as.push('');window.CARD=m;$('#view').innerHTML=`<button class="secondary" onclick="showEvent('${e.id}')">← Back</button><div class="card"><h2>${escapeHtml(m.home_team)} vs. ${escapeHtml(m.away_team)}</h2><div class="banner">${canEdit?(user.is_admin?'Administrator editing enabled.':'The first-listed team enters both scores.'):'Review only. Submitted scorecards are locked.'}</div><div class="score score-head"><span>Hole</span><span>Par</span><span>${escapeHtml(m.home_team)}</span><span>${escapeHtml(m.away_team)}</span></div>${c.holes.map((h,i)=>`<div class="rule"><b>Hole ${h.hole_number}: ${escapeHtml(h.rule_name)}</b><br><span class="muted">${escapeHtml(h.rule_description)}</span></div><div class="score"><b>${h.hole_number}</b><span>Par ${h.par}</span><input id="h${i}" value="${hs[i]}" ${canEdit?'':'disabled'} inputmode="numeric" oninput="cap(this,${h.par});updateTotal()"><input id="a${i}" value="${as[i]}" ${canEdit?'':'disabled'} inputmode="numeric" oninput="cap(this,${h.par});updateTotal()"></div>`).join('')}<div id="totals" class="total"></div>${canEdit?`<div class="actions"><button class="secondary" onclick="saveScore(false)">${m.status==='final'&&user.is_admin?'Reopen as draft':'Save draft'}</button><button class="gold" onclick="saveScore(true)">Submit final</button></div>`:''}</div>`;updateTotal();}
@@ -76,6 +76,28 @@ function cap(el,par){el.value=el.value.replace(/\D/g,'');if(el.value!=='')el.val
 function values(prefix){return Array.from({length:9},(_,i)=>{const v=$(`#${prefix}${i}`).value;return v===''?null:Number(v)});}
 function updateTotal(){const h=values('h'),a=values('a');$('#totals').innerHTML=`${escapeHtml(CARD.home_team)}: ${h.includes(null)?'—':total(h)}<br>${escapeHtml(CARD.away_team)}: ${a.includes(null)?'—':total(a)}`;}
 async function saveScore(finalize){try{const h=values('h'),a=values('a');if(finalize&&(h.includes(null)||a.includes(null))){alert('Enter a score for all nine holes.');return}await rpc('pkgl_save_score',{p_token:token,p_match:CARD.id,p_home_scores:h,p_away_scores:a,p_final:finalize});await refreshData(false);alert(finalize?'Final score submitted. Everyone can now see it.':'Draft saved.');showEvent(CARD.event_id)}catch(e){alert(e.message)}}
+
+
+function showCourseManager(selectedId){
+ if(!user.is_admin){alert('Administrator access required.');return}
+ const selected=selectedId||currentView.id||(D.courses[0]&&D.courses[0].id);
+ currentView={type:'courses',id:selected};
+ const c=course(selected);
+ $('#view').innerHTML=`<div class="card"><h2>Edit Courses and Hole Rules</h2><div class="muted">Choose a course, then edit the par, rule title, and rule description for each hole. Saved changes appear for everyone.</div><label>Course</label><select id="coursePick" onchange="showCourseManager(this.value)">${D.courses.map(x=>`<option value="${x.id}" ${x.id===selected?'selected':''}>${escapeHtml(x.name)}</option>`).join('')}</select>${c.holes.map(h=>`<div class="match"><h3>Hole ${h.hole_number}</h3><label>Par</label><input id="par-${h.hole_number}" type="number" min="2" max="7" value="${h.par}"><label>Rule title</label><input id="rule-${h.hole_number}" maxlength="80" value="${escapeHtml(h.rule_name)}"><label>Rule description</label><textarea id="desc-${h.hole_number}" rows="3" style="width:100%;font:inherit;border-radius:11px;border:1px solid #cbd5ce;padding:12px;margin:6px 0 12px">${escapeHtml(h.rule_description)}</textarea><button onclick="saveHole('${c.id}',${h.hole_number})">Save Hole ${h.hole_number}</button></div>`).join('')}</div>`;
+}
+async function saveHole(courseId,holeNumber){
+ const par=Number($(`#par-${holeNumber}`).value);
+ const rule=$(`#rule-${holeNumber}`).value.trim();
+ const desc=$(`#desc-${holeNumber}`).value.trim();
+ if(!Number.isInteger(par)||par<2||par>7){alert('Par must be a whole number from 2 through 7.');return}
+ if(!rule||!desc){alert('Enter both a rule title and a description.');return}
+ try{
+   await rpc('pkgl_admin_update_hole',{p_token:token,p_course_id:courseId,p_hole_number:holeNumber,p_par:par,p_rule_name:rule,p_rule_description:desc});
+   await refreshData(false);
+   alert(`Hole ${holeNumber} updated. Everyone will now see the change.`);
+   showCourseManager(courseId);
+ }catch(e){alert(e.message)}
+}
 
 function showTeamManager(){
  if(!user.is_admin){alert('Administrator access required.');return}
@@ -96,7 +118,31 @@ async function saveTeam(id){
  }catch(e){alert(e.message)}
 }
 
-function showStandings(){currentView={type:'standings'};const s={};D.teams.forEach(t=>s[t.id]={name:t.nickname,gp:0,w:0,l:0,t:0,pts:0,strokes:0});D.matches.filter(m=>m.status==='final').forEach(m=>{const h=s[m.home_team_id],a=s[m.away_team_id],x=total(m.home_scores),y=total(m.away_scores);h.gp++;a.gp++;h.strokes+=x;a.strokes+=y;if(x<y){h.w++;a.l++;h.pts+=3}else if(y<x){a.w++;h.l++;a.pts+=3}else{h.t++;a.t++;h.pts++;a.pts++}});const rows=Object.values(s).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.strokes-b.strokes||a.name.localeCompare(b.name));$('#view').innerHTML=`<div class="card"><h2>League Standings</h2><div class="muted">Win = 3 points · Tie = 1 point · Loss = 0 points</div><div style="overflow:auto"><table><thead><tr><th>#</th><th>Team</th><th>GP</th><th>W</th><th>L</th><th>T</th><th>Pts</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.gp}</td><td>${r.w}</td><td>${r.l}</td><td>${r.t}</td><td><b>${r.pts}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
+function showStandings(){
+ currentView={type:'standings'};
+ const s={};
+ D.teams.forEach(t=>s[t.id]={name:t.nickname,gp:0,w:0,l:0,t:0,pts:0,strokes:0,birdies:0,pars:0,bogeys:0,doubles:0});
+ D.matches.filter(m=>m.status==='final').forEach(m=>{
+   const h=s[m.home_team_id],a=s[m.away_team_id],x=total(m.home_scores),y=total(m.away_scores);
+   h.gp++;a.gp++;h.strokes+=x;a.strokes+=y;
+   if(x<y){h.w++;a.l++;h.pts+=3}else if(y<x){a.w++;h.l++;a.pts+=3}else{h.t++;a.t++;h.pts++;a.pts++}
+   const e=eventBy(m.event_id),c=course(e.course_id);
+   c.holes.forEach((hole,i)=>{
+     const hs=Number((m.home_scores||[])[i]),as=Number((m.away_scores||[])[i]);
+     const add=(row,score)=>{
+       if(!Number.isFinite(score)||score<1)return;
+       const d=score-hole.par;
+       if(d===-1)row.birdies++;
+       else if(d===0)row.pars++;
+       else if(d===1)row.bogeys++;
+       else if(d===2)row.doubles++;
+     };
+     add(h,hs);add(a,as);
+   });
+ });
+ const rows=Object.values(s).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.strokes-b.strokes||a.name.localeCompare(b.name));
+ $('#view').innerHTML=`<div class="card"><h2>League Standings</h2><div class="muted">Win = 3 points · Tie = 1 point · Loss = 0 points. Hole totals are counted automatically from final scorecards.</div><div style="overflow:auto"><table><thead><tr><th>#</th><th>Team</th><th>GP</th><th>W</th><th>L</th><th>T</th><th>Pts</th><th>Birdies</th><th>Pars</th><th>Bogeys</th><th>Doubles</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.gp}</td><td>${r.w}</td><td>${r.l}</td><td>${r.t}</td><td><b>${r.pts}</b></td><td>${r.birdies}</td><td>${r.pars}</td><td>${r.bogeys}</td><td>${r.doubles}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 if(token&&user)enter().catch(()=>{localStorage.clear();location.reload()});
 </script>
