@@ -99,7 +99,7 @@ async function saveHole(courseId,holeNumber){
  }catch(e){alert(e.message)}
 }
 
-async function showDocuments(){
+<h2>Documents</h2>{
   currentView={type:'documents'};
   if(!user.is_admin){alert("Administrator access required.");return;}
 
@@ -113,7 +113,7 @@ async function showDocuments(){
 
   $("#view").innerHTML=`
       <div class="card">
-        <h2>Documents</h2>
+        <h2>Documents</h2><h3>Upload Document</h3><input id="docFile" type="file"><br><br><button onclick="uploadDocument()">Upload</button><hr>
         ${docs.length
           ? docs.map(d=>`<p><a href="${d.url}" target="_blank">${d.name}</a></p>`).join("")
           : `<p class="muted">No documents uploaded yet.</p>`
