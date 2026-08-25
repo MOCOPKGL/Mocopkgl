@@ -42,7 +42,7 @@ exports.handler = async function (event) {
 
     const authData = await authResponse.json();
 
-    if (!authData?.user?.is_admin) {
+    const adminUser = Array.isArray(authData) ? authData[0]?.user : authData?.user; if (!adminUser?.is_admin) {
       return {
         statusCode: 403,
         body: JSON.stringify({ error: "Administrator access required." })
@@ -91,3 +91,4 @@ exports.handler = async function (event) {
     };
   }
 };
+
