@@ -25,7 +25,7 @@ label{font-size:13px;font-weight:700;color:var(--muted)}input,select,button{font
   <div id="msg" class="muted"></div>
 </section>
 <section id="app" class="hidden">
-  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager()">Edit teams</button><button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
+  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button onclick="showDocuments()">Documents</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager()">Edit teams</button><button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
   <div id="who" class="banner"></div><div id="view"></div>
 </section>
 </main>
@@ -99,7 +99,7 @@ async function saveHole(courseId,holeNumber){
  }catch(e){alert(e.message)}
 }
 
-function showTeamManager(){
+async function showDocuments(){   currentView={type:'documents'};   const bucket='PKGL_Documents';   const base=`${U}/storage/v1/object/public/${bucket}/`;   let files=[];   try{     const r=await fetch(`${U}/storage/v1/object/list/${bucket}`,{       method:'POST',headers:H,       body:JSON.stringify({prefix:'',limit:100,offset:0,sortBy:{column:'name',order:'asc'}})     });     files=await r.json();     if(!Array.isArray(files))files=[];   }catch(e){files=[]}   const list=files.filter(f=>f.name).map(f=>`<div class="card"><b>${escapeHtml(f.name)}</b><br><a href="${base}${encodeURIComponent(f.name)}" target="_blank">Open document</a></div>`).join('');   $('#view').innerHTML=`<div class="card"><h2>Documents</h2><p class="muted">League documents and information.</p>${list||'<p>No documents uploaded yet.</p>'}</div>`; }  function showTeamManager(){
  if(!user.is_admin){alert('Administrator access required.');return}
  currentView={type:'teams'};
  $('#view').innerHTML=`<div class="card"><h2>Edit Teams</h2><div class="muted">Change a team name, parent/child names, or assign a new 4-digit PIN. Leave the PIN blank to keep the current code.</div>${D.teams.map(t=>`<div class="match"><label>Team name</label><input id="nick-${t.id}" value="${escapeHtml(t.nickname)}" maxlength="60"><label>Parent & child</label><input id="players-${t.id}" value="${escapeHtml(t.players)}" maxlength="100"><label>New PIN (optional)</label><input id="pin-${t.id}" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Keep current PIN"><button onclick="saveTeam('${t.id}')">Save ${escapeHtml(t.nickname)}</button></div>`).join('')}</div>`;
