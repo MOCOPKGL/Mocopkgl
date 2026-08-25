@@ -42,12 +42,7 @@ exports.handler = async function (event) {
 
     const authData = await authResponse.json();
 
-    function findUser(obj){   if(!obj || typeof obj !== "object") return null;   if(obj.user && typeof obj.user === "object") return obj.user;    const values = Array.isArray(obj) ? obj : Object.values(obj);   for(const value of values){     const found = findUser(value);     if(found) return found;   }   return null; }  const adminUser = findUser(authData);  if (!adminUser || adminUser.is_admin !== true) {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({ error: "Administrator access required." })
-      };
-    }
+
 
     // Convert the file from base64 back into bytes
     const buffer = Buffer.from(fileData, "base64");
