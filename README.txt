@@ -29,3 +29,4 @@ DEPLOY TO GITHUB / NETLIFY
 
 IMPORTANT LIMITATION
 This version still stores scores separately on each phone or computer. For everyone to see the same scores and standings live, the app must be connected to a shared cloud database.
+
