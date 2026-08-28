@@ -140,12 +140,12 @@ async function deleteDocument(fileName){   if(!confirm(`Delete "${fileName}"?`))
 function showStandings(){
  currentView={type:'standings'};
  const s={};
- D.teams.forEach(t=>s[t.id]={name:t.nickname,gp:0,w:0,l:0,t:0,pts:0,strokes:0,birdies:0,pars:0,bogeys:0,doubles:0});
+ D.teams.forEach(t=>s[t.id]={name:t.nickname,gp:0,w:0,l:0,t:0,pts:0,strokes:0,cumulative:0,birdies:0,pars:0,bogeys:0,doubles:0});
  D.matches.filter(m=>m.status==='final').forEach(m=>{
    const h=s[m.home_team_id],a=s[m.away_team_id],x=total(m.home_scores),y=total(m.away_scores);
    h.gp++;a.gp++;h.strokes+=x;a.strokes+=y;
    if(x<y){h.w++;a.l++;h.pts+=3}else if(y<x){a.w++;h.l++;a.pts+=3}else{h.t++;a.t++;h.pts++;a.pts++}
-   const e=eventBy(m.event_id),c=course(e.course_id);
+   const e=eventBy(m.event_id),c=course(e.course_id);const parTotal=(c.holes||[]).reduce((n,hole)=>n+Number(hole.par||0),0);h.cumulative+=x-parTotal;a.cumulative+=y-parTotal;
    c.holes.forEach((hole,i)=>{
      const hs=Number((m.home_scores||[])[i]),as=Number((m.away_scores||[])[i]);
      const add=(row,score)=>{
@@ -160,7 +160,7 @@ function showStandings(){
    });
  });
  const rows=Object.values(s).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.strokes-b.strokes||a.name.localeCompare(b.name));
- $('#view').innerHTML=`<div class="card"><h2>League Standings</h2><div class="muted">Win = 3 points · Tie = 1 point · Loss = 0 points. Hole totals are counted automatically from final scorecards.</div><div style="overflow:auto"><table><thead><tr><th>#</th><th>Team</th><th>GP</th><th>W</th><th>L</th><th>T</th><th>Pts</th><th>Birdies</th><th>Pars</th><th>Bogeys</th><th>Doubles</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.gp}</td><td>${r.w}</td><td>${r.l}</td><td>${r.t}</td><td><b>${r.pts}</b></td><td>${r.birdies}</td><td>${r.pars}</td><td>${r.bogeys}</td><td>${r.doubles}</td></tr>`).join('')}</tbody></table></div></div>`;
+ $('#view').innerHTML=`<div class="card"><h2>League Standings</h2><div class="muted">Win = 3 points · Tie = 1 point · Loss = 0 points. Hole totals are counted automatically from final scorecards.</div><div style="overflow:auto"><table><thead><tr><th>#</th><th>Team</th><th>GP</th><th>W</th><th>L</th><th>T</th><th>Pts</th><th>Cumulative</th><th>Birdies</th><th>Pars</th><th>Bogeys</th><th>Doubles</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.gp}</td><td>${r.w}</td><td>${r.l}</td><td>${r.t}</td><td><b>${r.pts}</b></td><td><b>${r.cumulative>0?'+'+r.cumulative:r.cumulative}</b></td><td>${r.birdies}</td><td>${r.pars}</td><td>${r.bogeys}</td><td>${r.doubles}</td></tr>`).join('')}</tbody></table></div></div>`;
 }
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 if(token&&user)enter().catch(()=>{localStorage.clear();location.reload()});
