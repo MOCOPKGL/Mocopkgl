@@ -115,7 +115,7 @@ async function showDocuments(){
       <div class="card">
         <h2>Documents</h2><h3>Upload Document</h3><input id="docFile" type="file"><br><br><button onclick="uploadDocument()">Upload</button><hr>
         ${docs.length
-          ? docs.map(d=>`<p><a href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}" target="_blank">${d.name}</a></p>`).join("")
+          ? docs.map(d=>`<p><a href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}" target="_blank">${escapeHtml(d.name)}</a> &nbsp; <button class="danger" onclick='deleteDocument(${JSON.stringify(d.name)})'>Delete</button></p>`).join("")
           : `<p class="muted">No documents uploaded yet.</p>`
         }
       </div>`;
@@ -123,7 +123,7 @@ async function showDocuments(){
     alert(e.message);
   }
 }
-async function uploadDocument(){   const input=$("#docFile");   const file=input?.files?.[0];   if(!file){alert("Choose a file first.");return;}    try{     const reader=new FileReader();      reader.onload=async function(){       try{         const fileData=reader.result.split(",")[1];          const res=await fetch("/.netlify/functions/upload-document",{           method:"POST",           headers:{"Content-Type":"application/json"},           body:JSON.stringify({             token:token,             fileName:file.name,             fileType:file.type,             fileData:fileData           })         });          const data=await res.json();          if(!res.ok) throw new Error(data.error || "Upload failed.");          alert("Document uploaded.");         showDocuments();        }catch(e){         alert(e.message);       }     };      reader.readAsDataURL(file);    }catch(e){     alert(e.message);   } } async function saveTeam(id){
+async function deleteDocument(fileName){   if(!confirm(`Delete "${fileName}"?`))return;   try{     const res=await fetch("/.netlify/functions/delete-document",{       method:"POST",       headers:{"Content-Type":"application/json"},       body:JSON.stringify({token:token,fileName:fileName})     });     const data=await res.json();     if(!res.ok)throw new Error(data.error||"Delete failed.");     alert("Document deleted.");     showDocuments();   }catch(e){     alert(e.message);   } }  async function uploadDocument(){   const input=$("#docFile");   const file=input?.files?.[0];   if(!file){alert("Choose a file first.");return;}    try{     const reader=new FileReader();      reader.onload=async function(){       try{         const fileData=reader.result.split(",")[1];          const res=await fetch("/.netlify/functions/upload-document",{           method:"POST",           headers:{"Content-Type":"application/json"},           body:JSON.stringify({             token:token,             fileName:file.name,             fileType:file.type,             fileData:fileData           })         });          const data=await res.json();          if(!res.ok) throw new Error(data.error || "Upload failed.");          alert("Document uploaded.");         showDocuments();        }catch(e){         alert(e.message);       }     };      reader.readAsDataURL(file);    }catch(e){     alert(e.message);   } } async function saveTeam(id){
  const nickname=$(`#nick-${id}`).value.trim();
  const players=$(`#players-${id}`).value.trim();
  const pin=$(`#pin-${id}`).value.trim();
