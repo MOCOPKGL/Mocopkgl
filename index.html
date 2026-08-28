@@ -105,7 +105,7 @@ async function showDocuments(){
 
   try{
     const res=await fetch(`/.netlify/functions/list-documents`);
-    const data=await res.json();
+    const text=await res.text();let data={};try{data=JSON.parse(text)}catch(e){data={message:text}};
 
     if(!res.ok) throw new Error(data.error || "Unable to load documents.");
 
