@@ -123,7 +123,7 @@ async function showDocuments(){
     alert(e.message);
   }
 }
-async function saveTeam(id){
+async function uploadDocument(){   const input=$("#docFile");   const file=input?.files?.[0];   if(!file){alert("Choose a file first.");return;}    try{     const form=new FormData();     form.append("file",file);      const res=await fetch("/.netlify/functions/upload-document",{       method:"POST",       body:form     });      const data=await res.json();     if(!res.ok) throw new Error(data.error || "Upload failed.");      alert("Document uploaded.");     showDocuments();   }catch(e){     alert(e.message);   } }  async function saveTeam(id){
  const nickname=$(`#nick-${id}`).value.trim();
  const players=$(`#players-${id}`).value.trim();
  const pin=$(`#pin-${id}`).value.trim();
