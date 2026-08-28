@@ -35,7 +35,7 @@ label{font-size:13px;font-weight:700;color:var(--muted)}input,select,button{font
 const U=window.PKGL_CONFIG.SUPABASE_URL;
 const K=window.PKGL_CONFIG.SUPABASE_PUBLISHABLE_KEY;
 let token=localStorage.getItem('pkgl_token')||'';
-let user=JSON.parse(localStorage.getItem('pkgl_user')||'null');
+let user=null;try{user=JSON.parse(localStorage.getItem('pkgl_user')||'null')}catch(e){localStorage.removeItem('pkgl_user')}
 let D=null, currentView={type:'schedule'};
 const $=s=>document.querySelector(s);
 const H={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json'};
