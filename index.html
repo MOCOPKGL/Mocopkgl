@@ -109,13 +109,13 @@ async function showDocuments(){
 
     if(!res.ok) throw new Error(data.error || "Unable to load documents.");
 
-    const docs=data.documents || [];
+    const docs=Array.isArray(data) ? data : (data.documents || []);
 
   $("#view").innerHTML=`
       <div class="card">
         <h2>Documents</h2><h3>Upload Document</h3><input id="docFile" type="file"><br><br><button onclick="uploadDocument()">Upload</button><hr>
         ${docs.length
-          ? docs.map(d=>`<p><a href="${d.url}" target="_blank">${d.name}</a></p>`).join("")
+          ? docs.map(d=>`<p><a href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}" target="_blank">${d.name}</a></p>`).join("")
           : `<p class="muted">No documents uploaded yet.</p>`
         }
       </div>`;
