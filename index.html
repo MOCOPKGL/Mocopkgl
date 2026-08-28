@@ -25,7 +25,7 @@ label{font-size:13px;font-weight:700;color:var(--muted)}input,select,button{font
   <div id="msg" class="muted"></div>
 </section>
 <section id="app" class="hidden">
-  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button onclick="showDocuments()">Documents</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager()">Edit teams</button><button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
+  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button onclick="showDocuments()">Documents</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager();return false;">Edit teams</button><button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
   <div id="who" class="banner"></div><div id="view"></div>
 </section>
 </main>
