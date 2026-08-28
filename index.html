@@ -99,7 +99,7 @@ async function saveHole(courseId,holeNumber){
  }catch(e){alert(e.message)}
 }
 
-<h2>Documents</h2>{
+async function showDocuments(){
   currentView={type:'documents'};
   if(!user.is_admin){alert("Administrator access required.");return;}
 
