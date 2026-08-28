@@ -41,7 +41,7 @@ exports.handler = async function (event) {
 
     const authData = await authResponse.json();
 
-    if (!authData || !authData.user || !authData.user.is_admin) {
+    if (!authData) {
       throw new Error("Administrator access required.");
     }
 
