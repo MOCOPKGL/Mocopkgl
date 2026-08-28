@@ -42,7 +42,7 @@ exports.handler = async function (event) {
     const authData = await authResponse.json();
 
     if (!authData) {
-      throw new Error("Administrator access required.");
+      throw new Error("Unable to verify administrator.");
     }
 
     // Delete document from Supabase Storage
