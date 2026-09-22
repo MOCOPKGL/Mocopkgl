@@ -101,7 +101,7 @@ async function saveHole(courseId,holeNumber){
 
 async function showDocuments(){
   currentView={type:'documents'};
-  if(!user.is_admin){alert("Administrator access required.");return;}
+
 
   try{
     const res=await fetch(`/.netlify/functions/list-documents`);
@@ -113,9 +113,9 @@ async function showDocuments(){
 
   $("#view").innerHTML=`
       <div class="card">
-        <h2>Documents</h2><h3>Upload Document</h3><input id="docFile" type="file"><br><br><button onclick="uploadDocument()">Upload</button><hr>
+        <h2>Documents</h2>${user.is_admin?`<h3>Upload Document</h3><input id="docFile" type="file"><br><br><button onclick="uploadDocument()">Upload</button><hr>`:''}
         ${docs.length
-          ? docs.map(d=>`<p><a href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}" target="_blank">${escapeHtml(d.name)}</a> &nbsp; <button class="danger" onclick='deleteDocument(${JSON.stringify(d.name)})'>Delete</button></p>`).join("")
+          ? docs.map(d=>`<p><a href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}" target="_blank">${escapeHtml(d.name)}</a> ${user.is_admin?`&nbsp; <button class="danger" onclick='deleteDocument(${JSON.stringify(d.name)})'>Delete</button>`:''}</p>`).join("")
           : `<p class="muted">No documents uploaded yet.</p>`
         }
       </div>`;
