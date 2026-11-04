@@ -197,6 +197,49 @@ a{color:#b40f15;font-weight:800}
   .front-logo img{width:min(320px,100%)}
 }
 
+
+/* Schedule matchup cards */
+.schedule-match{
+  border:1px solid #d7dbe0;
+  border-left:6px solid var(--red);
+  border-radius:4px;
+  background:#fff;
+  padding:16px;
+  margin:14px 0;
+  box-shadow:0 2px 8px #00000012
+}
+.schedule-match:first-of-type{margin-top:16px}
+.schedule-match .teams{
+  font-size:19px;
+  line-height:1.4
+}
+.schedule-rank{
+  display:inline-block;
+  font-weight:900;
+  color:var(--red);
+  margin-right:4px
+}
+.schedule-vs{
+  display:inline-block;
+  margin:0 8px;
+  color:#7a7f86;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase
+}
+.schedule-favorite{
+  background:#f4f5f7;
+  border-left:4px solid var(--gold);
+  padding:10px 12px;
+  margin:10px 0 12px;
+  font-size:14px;
+  font-weight:900
+}
+@media(max-width:650px){
+  .schedule-match{padding:14px}
+  .schedule-match .teams{font-size:17px}
+}
+
 </style>
 </head>
 
@@ -1282,63 +1325,92 @@ function showEvent(id){
           const away=
             standings.find(x=>x.id===m.away_team_id);
 
+          const homeRank=
+            Math.max(
+              1,
+              standings.findIndex(x=>x.id===m.home_team_id)+1
+            );
+
+          const awayRank=
+            Math.max(
+              1,
+              standings.findIndex(x=>x.id===m.away_team_id)+1
+            );
+
           let predictionHtml='';
 
           if(!final && home && away){
 
             const p=predictMatch(home,away);
 
-            const projectedWinner=
-              p.winA>p.winB
-              ?home.name
-              :p.winB>p.winA
-              ?away.name
-              :'Even';
+            if(
+              p.scoreA!=='—'
+              &&
+              p.scoreB!=='—'
+            ){
 
-            predictionHtml=
-              `
-              <div class="banner" style="margin-top:10px">
+              const scoreA=Number(p.scoreA);
+              const scoreB=Number(p.scoreB);
+              const margin=Math.abs(scoreA-scoreB);
 
-                <b>
-                  Projected Winner:
-                  ${escapeHtml(projectedWinner)}
-                </b>
+              if(scoreA<scoreB){
 
-                <br>
+                predictionHtml=
+                  `
+                  <div class="schedule-favorite">
+                    Favorite:
+                    ${escapeHtml(home.name)}
+                    by ${margin}
+                    ${margin===1?'stroke':'strokes'}.
+                  </div>
+                  `;
 
-                <span>
-                  Projected Score:
-                  ${escapeHtml(home.name)}
-                  ${p.scoreA}
-                  –
-                  ${p.scoreB}
-                  ${escapeHtml(away.name)}
-                </span>
+              }
+              else if(scoreB<scoreA){
 
-                <br>
+                predictionHtml=
+                  `
+                  <div class="schedule-favorite">
+                    Favorite:
+                    ${escapeHtml(away.name)}
+                    by ${margin}
+                    ${margin===1?'stroke':'strokes'}.
+                  </div>
+                  `;
 
-                <span class="muted">
-                  Win chance:
-                  ${escapeHtml(home.name)} ${p.winA}%
-                  ·
-                  ${escapeHtml(away.name)} ${p.winB}%
-                </span>
+              }
+              else{
 
-              </div>
-              `;
+                predictionHtml=
+                  `
+                  <div class="schedule-favorite">
+                    Favorite: Even matchup.
+                  </div>
+                  `;
+
+              }
+
+            }
+
           }
 
           return `
-            <div class="match">
+            <div class="schedule-match">
 
               <div class="teams">
 
+                <span class="schedule-rank">
+                  #${homeRank}
+                </span>
                 ${escapeHtml(m.home_team)}
 
-                <span class="muted">
-                  vs.
+                <span class="schedule-vs">
+                  vs
                 </span>
 
+                <span class="schedule-rank">
+                  #${awayRank}
+                </span>
                 ${escapeHtml(m.away_team)}
 
               </div>
