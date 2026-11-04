@@ -85,7 +85,7 @@ exports.handler = async function (event) {
       }
 
       holesPlayed += holes.length * 2;
-      estimatedHours += (holes.length / 9) * 4;
+      estimatedHours += (holes.length / 9) * 6;
 
       holes.forEach((hole,i)=>{
         [Number(hs[i]),Number(as[i])].forEach(score=>{

@@ -792,7 +792,7 @@ function statCardsHtml(s){
     <div class="guest-stat-grid">
       <div class="guest-stat"><strong>${s.teams}</strong><span>Teams</span></div>
       <div class="guest-stat gold"><strong>${s.matchesPlayed}</strong><span>Matches Played</span></div>
-      <div class="guest-stat"><strong>${s.estimatedHours}</strong><span>Est. Hours With Kids</span></div>
+      <div class="guest-stat"><strong>${s.estimatedHours}</strong><span>Estimated Total Father-Kid League Time</span></div>
       <div class="guest-stat gold"><strong>${s.holesPlayed}</strong><span>Team Holes Played</span></div>
       <div class="guest-stat"><strong>${s.eagles}</strong><span>Eagles</span></div>
       <div class="guest-stat gold"><strong>${s.birdies}</strong><span>Birdies</span></div>
@@ -852,7 +852,7 @@ function renderPublicStats(){
       <div class="guest-kicker">Live PKGL Snapshot</div>
       <h2>League by the Numbers</h2>
       ${statCardsHtml(GUEST.stats)}
-      <div class="guest-note">Estimated hours use roughly 2 hours per 9 holes for each parent-kid team. Stats update from submitted final scorecards.</div>
+      <div class="guest-note">Estimated total father-kid league time uses 3 hours per 9 holes for each father-kid team. Stats update from submitted final scorecards.</div>
     </div>
   `;
 }
@@ -888,7 +888,7 @@ function showGuestHome(){
       <h2>PKGL Guest View</h2>
       <div class="muted">A read-only look at the league. Score entry, schedules, documents, and admin tools remain protected.</div>
       ${statCardsHtml(GUEST.stats)}
-      <div class="guest-note">Estimated hours use roughly 2 hours per 9 holes for each parent-kid team.</div>
+      <div class="guest-note">Estimated total father-kid league time uses 3 hours per 9 holes for each father-kid team.</div>
     </div>
 
     <div class="guest-panel">
