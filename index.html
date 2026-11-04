@@ -313,58 +313,10 @@ a{color:#b40f15;font-weight:800}
   .schedule-match .teams{font-size:17px}
 }
 
-
-/* PKGL video welcome: isolated from authentication, scoring, and standings */
-#pkglVideoIntro{
-  display:none;position:fixed;inset:0;z-index:9999;
-  background:#050607;color:#fff;opacity:1;
-  transition:opacity .45s ease
-}
-#pkglVideoIntro.pkgl-intro-active{display:block}
-#pkglVideoIntro.pkgl-intro-leaving{opacity:0;pointer-events:none}
-#pkglWelcomeVideo{
-  display:block;width:100%;height:100%;
-  object-fit:contain;background:#050607
-}
-#pkglVideoIntro .pkgl-intro-gradient{
-  position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,#0008 0%,transparent 30%,transparent 65%,#0009 100%)
-}
-#pkglVideoIntro .pkgl-intro-brand{
-  position:absolute;top:max(20px,env(safe-area-inset-top));
-  left:20px;display:flex;align-items:center;gap:12px;
-  text-shadow:0 2px 12px #000;font-weight:900;letter-spacing:.7px
-}
-#pkglVideoIntro .pkgl-intro-brand img{width:52px;height:52px;object-fit:contain}
-#pkglVideoIntro .pkgl-intro-skip{
-  position:absolute;right:20px;bottom:max(24px,env(safe-area-inset-bottom));
-  background:#15171add;color:#fff;border:1px solid #ffffff8c;
-  border-radius:999px;padding:12px 18px;font-size:13px
-}
-#pkglVideoIntro .pkgl-intro-skip:hover,
-#pkglVideoIntro .pkgl-intro-skip:focus-visible{background:#34383f}
-body.pkgl-intro-open{overflow:hidden}
-@media(prefers-reduced-motion:reduce){
-  #pkglVideoIntro{transition:none}
-}
-
 </style>
 </head>
 
 <body>
-
-<!-- Optional opening film. Never changes the league app or its data. -->
-<div id="pkglVideoIntro" aria-label="PKGL opening video" role="region">
-  <video id="pkglWelcomeVideo" muted playsinline webkit-playsinline preload="metadata" poster="pkgl-logo.webp">
-    <source src="intro-landon.mp4" type="video/mp4">
-  </video>
-  <div class="pkgl-intro-gradient" aria-hidden="true"></div>
-  <div class="pkgl-intro-brand">
-    <img src="pkgl-logo.webp" alt="">
-    <span>PKGL · PARENT–KID GOLF LEAGUE</span>
-  </div>
-  <button type="button" id="pkglSkipIntro" class="pkgl-intro-skip">Skip intro</button>
-</div>
 
 <header>
   <div class="wrap">
@@ -541,55 +493,6 @@ body.pkgl-intro-open{overflow:hidden}
 
 </main>
 
-
-
-<script>
-/* Safe, one-time welcome film; fail-open so the website is never blocked. */
-(function initPkglWelcomeIntro(){
-  'use strict';
-  const overlay=document.getElementById('pkglVideoIntro');
-  const video=document.getElementById('pkglWelcomeVideo');
-  const skip=document.getElementById('pkglSkipIntro');
-  if(!overlay||!video||!skip)return;
-
-  let alreadySeen=false;
-  try{alreadySeen=sessionStorage.getItem('pkgl_intro_seen_v1')==='1';}catch(_){}
-  if(alreadySeen || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches))return;
-
-  let closed=false;
-  let startTimeout=null;
-  let safetyTimeout=null;
-  function finish(){
-    if(closed)return;
-    closed=true;
-    clearTimeout(startTimeout);
-    clearTimeout(safetyTimeout);
-    document.body.classList.remove('pkgl-intro-open');
-    overlay.classList.add('pkgl-intro-leaving');
-    try{sessionStorage.setItem('pkgl_intro_seen_v1','1');}catch(_){}
-    window.setTimeout(function(){
-      try{video.pause();}catch(_){}
-      overlay.remove();
-    },500);
-  }
-
-  video.addEventListener('ended',finish,{once:true});
-  video.addEventListener('error',finish,{once:true});
-  skip.addEventListener('click',finish);
-  overlay.classList.add('pkgl-intro-active');
-  document.body.classList.add('pkgl-intro-open');
-  startTimeout=window.setTimeout(function(){
-    if(video.readyState < 2)finish();
-  },6000);
-  safetyTimeout=window.setTimeout(finish,15000);
-  video.muted=true;
-  video.playsInline=true;
-  try{
-    const playback=video.play();
-    if(playback && typeof playback.catch==='function')playback.catch(finish);
-  }catch(_){finish();}
-})();
-</script>
 
 <script src="config.js"></script>
 
