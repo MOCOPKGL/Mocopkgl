@@ -1,3 +1,46 @@
+function compareMonthlyCountback(a,b,holeCount,teamName){
+
+  if(a.score!==b.score){
+    return a.score-b.score;
+  }
+
+  const sumRange=(row,start,end)=>
+    row.roundScores
+      .slice(start,end)
+      .reduce((n,v)=>n+(Number(v)||0),0);
+
+  if(holeCount>=18){
+    const back9=sumRange(a,9,18)-sumRange(b,9,18);
+    if(back9!==0)return back9;
+
+    const last6=sumRange(a,12,18)-sumRange(b,12,18);
+    if(last6!==0)return last6;
+
+    const last3=sumRange(a,15,18)-sumRange(b,15,18);
+    if(last3!==0)return last3;
+
+    const lastHole=(Number(a.roundScores[17])||0)-(Number(b.roundScores[17])||0);
+    if(lastHole!==0)return lastHole;
+  } else {
+    const last6=sumRange(a,3,9)-sumRange(b,3,9);
+    if(last6!==0)return last6;
+
+    const last3=sumRange(a,6,9)-sumRange(b,6,9);
+    if(last3!==0)return last3;
+
+    const lastHole=(Number(a.roundScores[8])||0)-(Number(b.roundScores[8])||0);
+    if(lastHole!==0)return lastHole;
+  }
+
+  if(a.birdies!==b.birdies){
+    return b.birdies-a.birdies;
+  }
+
+  return (teamName[a.teamId]||"Team")
+    .localeCompare(teamName[b.teamId]||"Team");
+}
+
+
 exports.handler = async function (event) {
   try {
     if (event.httpMethod !== "GET") {
@@ -117,25 +160,28 @@ exports.handler = async function (event) {
       const scoreMap={};
 
       const addRound=(teamId,score,roundScores)=>{
-        if(!scoreMap[teamId]){
-          scoreMap[teamId]={score:0,par:0,birdies:0};
-        }
+        const cleanScores=holes.map((_,i)=>Number((roundScores||[])[i])||0);
 
-        scoreMap[teamId].score+=score;
-        scoreMap[teamId].par+=roundPar;
+        let birdies=0;
 
         holes.forEach((hole,i)=>{
-          const value=Number((roundScores||[])[i]);
+          const value=cleanScores[i];
           if(
-            Number.isFinite(value)
-            &&
             value>=1
             &&
             value===Number(hole.par)-1
           ){
-            scoreMap[teamId].birdies++;
+            birdies++;
           }
         });
+
+        scoreMap[teamId]={
+          teamId,
+          score,
+          par:roundPar,
+          birdies,
+          roundScores:cleanScores
+        };
       };
 
       for (const m of finals) {
@@ -149,19 +195,19 @@ exports.handler = async function (event) {
         addRound(m.away_team_id,awayTotal,as);
       }
 
-      const winner=Object.entries(scoreMap)
+      const winner=Object.values(scoreMap)
         .sort((a,b)=>
-          a[1].score-b[1].score
-          ||
-          b[1].birdies-a[1].birdies
-          ||
-          (teamName[a[0]]||"Team").localeCompare(teamName[b[0]]||"Team")
+          compareMonthlyCountback(
+            a,
+            b,
+            holes.length,
+            teamName
+          )
         )[0];
 
       if(!winner) continue;
 
-      const [teamId,v]=winner;
-      const relative=v.score-v.par;
+      const relative=winner.score-winner.par;
       const toParLabel=
         relative<0
         ?`${Math.abs(relative)} under`
@@ -173,9 +219,9 @@ exports.handler = async function (event) {
         event_id:event.id,
         event_order:Number(event.event_order)||0,
         month:event.month_name,
-        team:teamName[teamId] || "Team",
-        score:v.score,
-        birdies:v.birdies,
+        team:teamName[winner.teamId] || "Team",
+        score:winner.score,
+        birdies:winner.birdies,
         relative,
         toParLabel
       });
