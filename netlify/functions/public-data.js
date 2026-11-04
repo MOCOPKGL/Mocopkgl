@@ -28,7 +28,7 @@ exports.handler = async function (event) {
       getTable("pkgl_courses"),
       getTable("pkgl_holes","select=*&order=hole_number.asc"),
       getTable("pkgl_events","select=*&order=event_order.asc"),
-      getTable("pkgl_matches","select=*")
+      getTable("pkgl_matches","select=*&status=eq.final")
     ]);
 
     const teams = teamsRaw.map(t => ({
@@ -59,12 +59,7 @@ exports.handler = async function (event) {
       course_id: e.course_id
     }));
 
-    const event_match_counts = events.map(e => ({
-      event_id: e.id,
-      total_matches: matchesRaw.filter(m => m.event_id === e.id).length
-    }));
-
-    const matches = matchesRaw.filter(m => m.status === "final").map(m => ({
+    const matches = matchesRaw.map(m => ({
       id: m.id,
       event_id: m.event_id,
       home_team_id: m.home_team_id,
@@ -82,7 +77,7 @@ exports.handler = async function (event) {
         "Content-Type": "application/json",
         "Cache-Control": "no-store, max-age=0"
       },
-      body: JSON.stringify({ teams, courses, events, matches, event_match_counts })
+      body: JSON.stringify({ teams, courses, events, matches })
     };
   } catch (error) {
     return {
