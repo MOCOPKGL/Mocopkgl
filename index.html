@@ -946,8 +946,28 @@ async function submitJoinInterest(event){
     msg.className='join-success';
     msg.textContent='Thank you. You have been added to the PKGL interest list.';
   }catch(e){
-    msg.className='status error';
-    msg.textContent=e.message||'Unable to submit the form.';
+    try{
+      const fallbackBody=new URLSearchParams(new FormData(form));
+
+      const fallback=await fetch('/',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/x-www-form-urlencoded'
+        },
+        body:fallbackBody.toString()
+      });
+
+      if(!fallback.ok){
+        throw new Error('Fallback submission failed.');
+      }
+
+      form.reset();
+      msg.className='join-success';
+      msg.textContent='Thank you. You have been added to the PKGL interest list.';
+    }catch(fallbackError){
+      msg.className='status error';
+      msg.textContent='We could not save your information. Please try again.';
+    }
   }finally{
     btn.disabled=false;
   }
