@@ -24,16 +24,17 @@ exports.handler = async function (event) {
       return text ? JSON.parse(text) : [];
     }
 
-    const [teamsRaw,coursesRaw,holesRaw,eventsRaw,matchesRaw] = await Promise.all([
-      getTable("pkgl_teams","select=id,nickname"),
-      getTable("pkgl_courses","select=id,name"),
+    const [teamsRaw,holesRaw,eventsRaw,matchesRaw,scoresRaw] = await Promise.all([
+      getTable("pkgl_teams","select=id,nickname&is_admin=eq.false"),
       getTable("pkgl_holes","select=course_id,hole_number,par&order=hole_number.asc"),
       getTable("pkgl_events","select=id,event_order,month_name,course_id&order=event_order.asc"),
-      getTable("pkgl_matches","select=id,event_id,home_team_id,away_team_id,home_scores,away_scores,status")
+      getTable("pkgl_matches","select=id,event_id,home_team_id,away_team_id,status,match_order"),
+      getTable("pkgl_scores","select=match_id,home_scores,away_scores")
     ]);
 
     const teams = teamsRaw.map(t => ({ id:t.id, name:t.nickname }));
     const teamName = Object.fromEntries(teams.map(t => [t.id,t.name]));
+    const scoresByMatch = Object.fromEntries(scoresRaw.map(s => [s.match_id,s]));
 
     const holesByCourse = {};
     for (const h of holesRaw) {
@@ -65,8 +66,9 @@ exports.handler = async function (event) {
 
       const event=eventById[m.event_id];
       const holes=event ? (holesByCourse[event.course_id] || []) : [];
-      const hs=Array.isArray(m.home_scores) ? m.home_scores : [];
-      const as=Array.isArray(m.away_scores) ? m.away_scores : [];
+      const scoreRow=scoresByMatch[m.id] || {};
+      const hs=Array.isArray(scoreRow.home_scores) ? scoreRow.home_scores : [];
+      const as=Array.isArray(scoreRow.away_scores) ? scoreRow.away_scores : [];
 
       const homeTotal=hs.reduce((n,v)=>n+(Number(v)||0),0);
       const awayTotal=as.reduce((n,v)=>n+(Number(v)||0),0);
@@ -82,7 +84,6 @@ exports.handler = async function (event) {
         home.t++; away.t++; home.pts++; away.pts++;
       }
 
-      // Two parent-kid teams play every hole in a match.
       holesPlayed += holes.length * 2;
       estimatedHours += (holes.length / 9) * 4;
 
@@ -111,12 +112,18 @@ exports.handler = async function (event) {
 
       const scores=[];
       for (const m of finals) {
-        const homeTotal=(m.home_scores||[]).reduce((n,v)=>n+(Number(v)||0),0);
-        const awayTotal=(m.away_scores||[]).reduce((n,v)=>n+(Number(v)||0),0);
+        const scoreRow=scoresByMatch[m.id] || {};
+        const hs=Array.isArray(scoreRow.home_scores) ? scoreRow.home_scores : [];
+        const as=Array.isArray(scoreRow.away_scores) ? scoreRow.away_scores : [];
+        const homeTotal=hs.reduce((n,v)=>n+(Number(v)||0),0);
+        const awayTotal=as.reduce((n,v)=>n+(Number(v)||0),0);
+
         scores.push({team:teamName[m.home_team_id] || "Team",score:homeTotal});
         scores.push({team:teamName[m.away_team_id] || "Team",score:awayTotal});
       }
+
       scores.sort((a,b)=>a.score-b.score || a.team.localeCompare(b.team));
+
       if (scores[0]) {
         teamOfMonth.push({
           event_order:Number(event.event_order)||0,
@@ -129,28 +136,26 @@ exports.handler = async function (event) {
 
     teamOfMonth.sort((a,b)=>a.event_order-b.event_order);
 
-    const body={
-      stats:{
-        teams:teams.length,
-        matchesPlayed:finalMatches.length,
-        holesPlayed,
-        estimatedHours:Math.round(estimatedHours),
-        eagles,
-        birdies,
-        pars,
-        completedMonths:teamOfMonth.length
-      },
-      teamOfMonth:teamOfMonth.map(({month,team,score})=>({month,team,score})),
-      standings:standingsRows
-    };
-
     return {
       statusCode:200,
       headers:{
         "Content-Type":"application/json",
         "Cache-Control":"no-store, max-age=0"
       },
-      body:JSON.stringify(body)
+      body:JSON.stringify({
+        stats:{
+          teams:teams.length,
+          matchesPlayed:finalMatches.length,
+          holesPlayed,
+          estimatedHours:Math.round(estimatedHours),
+          eagles,
+          birdies,
+          pars,
+          completedMonths:teamOfMonth.length
+        },
+        teamOfMonth:teamOfMonth.map(({month,team,score})=>({month,team,score})),
+        standings:standingsRows
+      })
     };
   } catch (error) {
     return {
