@@ -1,43 +1,53 @@
-async function getSession(SUPABASE_URL,SERVICE_KEY,token) {
-  if (!token) return null;
-  const q = new URLSearchParams({
-    select: "is_admin",
-    token: `eq.${token}`,
-    expires_at: `gt.${new Date().toISOString()}`,
-    limit: "1"
-  });
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/pkgl_sessions?${q.toString()}`, {
-    headers: {
-      apikey: SERVICE_KEY,
-      Authorization: `Bearer ${SERVICE_KEY}`
-    }
-  });
-  if (!r.ok) return null;
-  const rows = await r.json();
-  return rows[0] || null;
-}
-
 exports.handler = async function (event) {
   try {
     if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: "Method not allowed" })
+      };
     }
 
     const SUPABASE_URL = process.env.SUPABASE_URL;
     const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const BUCKET = "PKGL Documents";
-    const { token, fileName } = JSON.parse(event.body || "{}");
 
-    if (!SUPABASE_URL || !SERVICE_KEY) throw new Error("Server configuration is missing.");
-    if (!token || !fileName) throw new Error("Missing delete information.");
-
-    const session = await getSession(SUPABASE_URL,SERVICE_KEY,token);
-    if (!session || session.is_admin !== true) {
-      return { statusCode: 403, body: JSON.stringify({ error: "Administrator access required." }) };
+    if (!SUPABASE_URL || !SERVICE_KEY) {
+      throw new Error("Server configuration is missing.");
     }
 
+    const { token, fileName } = JSON.parse(event.body || "{}");
+
+    if (!token || !fileName) {
+      throw new Error("Missing delete information.");
+    }
+
+    // Verify administrator
+    const authResponse = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/pkgl_bootstrap`,
+      {
+        method: "POST",
+        headers: {
+          apikey: SERVICE_KEY,
+          Authorization: `Bearer ${SERVICE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ p_token: token })
+      }
+    );
+
+    if (!authResponse.ok) {
+      throw new Error("Unable to verify administrator.");
+    }
+
+    const authData = await authResponse.json();
+
+    if (!authData) {
+      throw new Error("Unable to verify administrator.");
+    }
+
+    // Delete document from Supabase Storage
     const deleteResponse = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(BUCKET)}`,
+      `${SUPABASE_URL}/storage/v1/object/${BUCKET}`,
       {
         method: "DELETE",
         headers: {
@@ -45,15 +55,30 @@ exports.handler = async function (event) {
           Authorization: `Bearer ${SERVICE_KEY}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ prefixes:[fileName] })
+        body: JSON.stringify({
+          prefixes: [fileName]
+        })
       }
     );
 
     const deleteText = await deleteResponse.text();
-    if (!deleteResponse.ok) throw new Error(deleteText || "Delete failed.");
 
-    return { statusCode: 200, body: JSON.stringify({ success:true }) };
+    if (!deleteResponse.ok) {
+      throw new Error(deleteText || "Delete failed.");
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ success: true })
+    };
+
   } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error:error.message || "Delete failed." }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: error.message || "Delete failed."
+      })
+    };
   }
 };
+

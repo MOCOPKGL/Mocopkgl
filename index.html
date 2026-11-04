@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#d71920">
+<meta name="theme-color" content="#123d2b">
 <link rel="manifest" href="manifest.webmanifest">
-<title>PKGA | Parent Kid Golf Association</title>
+<title>MOCO PKGL</title>
 
 <style>
 :root{
@@ -102,146 +102,85 @@ a{color:#b40f15;font-weight:800}
   .teams{font-size:16px}
   .result{font-size:22px}
 }
-
-/* PKGA Maryland identity */
-:root{--md-red:#d71920;--md-gold:#ffcd00;--md-black:#111111;--md-white:#ffffff}
-.site-header .wrap:before{content:"MARYLAND • PKGA";background:var(--md-red);color:#fff}
-.site-header{background:linear-gradient(100deg,#050505 0%,#161616 58%,#2a090a 100%);border-bottom-color:var(--md-gold)}
-.brand-lockup{display:flex;align-items:center;gap:14px}
-.brand-logo{width:78px;height:78px;object-fit:contain;background:#fff;border-radius:50%;box-shadow:0 0 0 3px var(--md-gold),0 0 0 6px var(--md-red)}
-.brand-copy h1{font-size:27px}
-.brand-copy .sub{color:#e5e5e5;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-top:5px}
-.md-ribbon{height:8px;background:linear-gradient(90deg,#111 0 22%,#ffcd00 22% 44%,#d71920 44% 66%,#fff 66% 78%,#d71920 78% 100%)}
-.landing{min-height:100vh;background:#080808;color:#fff;display:grid;place-items:center;position:relative;overflow:hidden;padding:28px 18px}
-.landing:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 15%,#d7192040,transparent 35%),radial-gradient(circle at 85% 80%,#ffcd0028,transparent 34%),linear-gradient(135deg,#090909,#161616 55%,#050505)}
-.landing-shell{width:min(980px,100%);position:relative;z-index:2;text-align:center;border:1px solid #ffffff20;background:#0b0b0bd9;box-shadow:0 30px 80px #0008;padding:26px 24px 0}
-.landing-logo{width:min(300px,66vw);height:auto;filter:drop-shadow(0 15px 30px #0008)}
-.landing-kicker{margin-top:12px;color:var(--md-gold);font-weight:900;text-transform:uppercase;letter-spacing:2px;font-size:12px}
-.landing-title{margin:6px auto 8px;font-size:clamp(28px,5vw,52px);line-height:1;text-transform:uppercase;max-width:780px}
-.landing-copy{max-width:650px;margin:0 auto 20px;color:#d6d6d6}
-.enter-btn{background:var(--md-red);border:2px solid var(--md-gold);color:#fff;font-size:18px;letter-spacing:2px;padding:14px 42px;box-shadow:0 8px 0 #8d0c11;margin:5px 0 24px}
-.enter-btn:hover{background:#ef2028}
-.md-symbols{display:flex;justify-content:center;align-items:center;gap:18px;margin:14px 0 18px;flex-wrap:wrap}
-.md-crab{font-size:40px;filter:drop-shadow(0 5px 8px #000)}
-.md-flag-mini{width:92px;height:54px;border:2px solid #fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden}
-.md-flag-mini span:nth-child(1),.md-flag-mini span:nth-child(4){background:conic-gradient(#111 0 25%,#ffcd00 0 50%,#111 0 75%,#ffcd00 0)}
-.md-flag-mini span:nth-child(2),.md-flag-mini span:nth-child(3){background:linear-gradient(45deg,#d71920 0 37%,#fff 37% 45%,#d71920 45% 55%,#fff 55% 63%,#d71920 63%)}
-.md-map{width:130px;height:64px}
-.md-map path{fill:var(--md-gold);stroke:#fff;stroke-width:3}
-.tee-scene{height:185px;position:relative;margin:0 -24px;background:linear-gradient(#0d0d0d00,#0d0d0d 70%),linear-gradient(90deg,#d719201f,#ffcd0012);overflow:hidden}
-.tee-scene svg{width:100%;height:100%}
-.tee-ground{fill:#131313}.tee-golfer{fill:#fff}.tee-accent{fill:var(--md-gold)}.tee-red{fill:var(--md-red)}
-.auth-modal{position:fixed;inset:0;background:#000b;z-index:100;display:grid;place-items:center;padding:20px}
-.auth-card{width:min(480px,100%);background:#fff;color:#111;border-top:7px solid var(--md-red);box-shadow:0 25px 70px #0008;padding:20px;position:relative}
-.auth-card h2{margin:0 0 8px;text-transform:uppercase}
-.auth-close{position:absolute;right:10px;top:10px;background:#eee;color:#111;padding:7px 10px}
-.protected-note{background:#fff5d4;border-left:5px solid var(--md-gold);padding:10px;margin-bottom:14px;font-size:13px}
-.access-bar{background:#fff;border:1px solid var(--line);border-left:5px solid var(--md-gold);padding:9px 12px;margin:12px 0;font-size:12px;font-weight:800;text-transform:uppercase}
-.home-hero{position:relative;background:linear-gradient(115deg,#0c0c0c 0 58%,#3b090b 58%);color:#fff;overflow:hidden;border-top:7px solid var(--md-gold)}
-.home-hero-inner{position:relative;z-index:2;max-width:620px}
-.home-hero h2{border:0;color:#fff;font-size:clamp(28px,5vw,48px);line-height:1;margin:0 0 10px;padding:0}
-.home-hero p{color:#ddd;max-width:560px}
-.home-hero .tee-mini{position:absolute;right:0;bottom:0;width:42%;height:100%;opacity:.95}
-.quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
-.quick-card{background:#fff;border-top:5px solid var(--md-red);padding:14px;cursor:pointer;box-shadow:0 1px 4px #0002}
-.quick-card.locked{border-top-color:var(--md-gold)}
-.quick-card b{display:block;text-transform:uppercase;font-size:13px;margin-bottom:3px}
-.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#333;margin-top:15px}
-.stat-box{background:#171717;color:#fff;padding:13px;text-align:center}
-.stat-box strong{display:block;font-size:24px;color:var(--md-gold)}
-.nav{border-bottom:4px solid var(--md-gold)}
-.nav button:hover{border-bottom-color:var(--md-red)}
-.nav button:nth-child(3),.nav button:nth-child(4){color:#fff}
-#logoutBtn{color:#ffcd00}
-@media(max-width:720px){
-  .brand-logo{width:62px;height:62px}
-  .brand-copy h1{font-size:20px}
-  .quick-grid{grid-template-columns:1fr 1fr}
-  .home-hero{background:#111}
-  .home-hero .tee-mini{opacity:.18;width:70%}
-  .landing-shell{padding:20px 15px 0}
-  .tee-scene{margin:0 -15px}
-}
-
 </style>
 </head>
 
-
 <body>
 
-<section id="landing" class="landing">
-  <div class="landing-shell">
-    <div class="md-ribbon"></div>
-    <img src="pkga-logo.webp" class="landing-logo" alt="PKGA Parent Kid Golf Association logo">
-    <div class="landing-kicker">Maryland • Parent + Kid Golf</div>
-    <h1 class="landing-title">Parent Kid Golf Association</h1>
-    <p class="landing-copy">Maryland families competing together, connecting on the course, and creating memories that last.</p>
-    <div class="md-symbols">
-      <div class="md-flag-mini" aria-label="Maryland flag inspired graphic"><span></span><span></span><span></span><span></span></div>
-      <svg class="md-map" viewBox="0 0 330 150" role="img" aria-label="Maryland map">
-        <path d="M15 48 L103 48 L109 33 L151 36 L160 27 L181 32 L198 48 L218 45 L231 55 L247 52 L260 68 L285 74 L314 69 L306 84 L286 89 L278 103 L255 96 L244 111 L223 104 L210 116 L190 109 L176 127 L160 113 L143 119 L132 102 L113 105 L99 91 L76 94 L66 78 L40 82 L25 67 Z"/>
-      </svg>
-      <div class="md-crab" aria-label="Maryland crab">🦀</div>
-    </div>
-    <button class="enter-btn" onclick="enterSite()">ENTER</button>
-    <div class="tee-scene" aria-label="Golfer teeing off">
-      <svg viewBox="0 0 900 190" preserveAspectRatio="xMidYMid slice">
-        <path class="tee-ground" d="M0 151 C180 126 330 164 470 143 C620 121 760 146 900 126 L900 190 L0 190 Z"/>
-        <circle class="tee-accent" cx="690" cy="38" r="16"/>
-        <path class="tee-golfer" d="M420 38c17 0 29 13 29 29s-12 29-29 29-29-13-29-29 12-29 29-29zm-15 60 35 0 20 45-17 6-17-32-8 34-20-3 7-50zm19 10 52-31 6 9-48 39z"/>
-        <path class="tee-golfer" d="M478 79 L535 24 L541 30 L486 87 Z"/>
-        <circle class="tee-red" cx="548" cy="17" r="5"/>
-        <rect class="tee-accent" x="537" y="136" width="3" height="18"/>
-        <circle fill="#fff" cx="538.5" cy="133" r="3.5"/>
-      </svg>
-    </div>
+<header>
+  <div class="wrap">
+    <h1>MOCO Parent–Kid Golf League</h1>
+    <p>League Central · Scores · Standings · Playoff Race</p>
   </div>
+</header>
+
+<main>
+
+<section id="login" class="card">
+  <h2>League Login</h2>
+
+  <label for="team">Team</label>
+  <select id="team"></select>
+
+  <label for="pin">4-digit PIN</label>
+  <input id="pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Enter PIN">
+
+  <button id="loginBtn" onclick="login()">Open league app</button>
+
+  <div id="msg" class="muted"></div>
 </section>
 
-<section id="site" class="hidden">
-  <header class="site-header">
-    <div class="md-ribbon"></div>
-    <div class="wrap brand-lockup">
-      <img src="pkga-logo.webp" class="brand-logo" alt="PKGA logo">
-      <div class="brand-copy">
-        <h1>Parent Kid Golf Association</h1>
-        <div class="sub">Maryland • League Central • Scores • Standings • Playoffs</div>
-      </div>
-    </div>
-  </header>
 
-  <main>
-    <div class="nav">
-      <button onclick="showHome()">Home</button>
-      <button onclick="openProtected('schedule')">🔒 Schedule</button>
-      <button onclick="showStandings()">Standings</button>
-      <button onclick="showPlayoffPicture()">Playoff Picture</button>
-      <button onclick="openProtected('documents')">🔒 Documents</button>
-      <button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager();return false;">Edit teams</button>
-      <button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button>
-      <button id="refreshBtn" class="secondary refresh hidden" onclick="refreshData(true)">Refresh scores</button>
-      <span class="spacer"></span>
-      <button id="logoutBtn" class="secondary hidden" onclick="logout()">Log out</button>
-    </div>
-    <div id="who" class="access-bar">Public viewing • Schedule and Documents require a team PIN</div>
-    <div id="view"><div class="card">Loading PKGA…</div></div>
-  </main>
+<section id="app" class="hidden">
+
+  <div class="nav">
+
+    <button onclick="showSchedule()">Schedule</button>
+
+    <button onclick="showStandings()">Standings</button>
+
+    <button onclick="showPlayoffPicture()">Playoff Picture</button>
+
+    <button onclick="showDocuments()">Documents</button>
+
+    <button
+      id="adminTeamsBtn"
+      class="gold hidden"
+      onclick="showTeamManager();return false;">
+      Edit teams
+    </button>
+
+    <button
+      id="adminCoursesBtn"
+      class="gold hidden"
+      onclick="showCourseManager()">
+      Edit courses
+    </button>
+
+    <button
+      class="secondary refresh"
+      onclick="refreshData(true)">
+      Refresh scores
+    </button>
+
+    <span class="spacer"></span>
+
+    <button
+      class="secondary"
+      onclick="logout()">
+      Log out
+    </button>
+
+  </div>
+
+  <div id="who" class="banner"></div>
+
+  <div id="view"></div>
+
 </section>
 
-<div id="authGate" class="auth-modal hidden">
-  <div class="auth-card">
-    <button class="auth-close" onclick="closeAuthGate()">✕</button>
-    <img src="pkga-logo.webp" alt="PKGA" style="width:86px;height:86px;object-fit:contain;float:right;margin:30px 0 8px 14px">
-    <h2 id="authTitle">Team Access</h2>
-    <div class="protected-note">Schedule/scoring and Documents are protected. Select your team and enter your 4-digit PIN.</div>
-    <label for="team">Team</label>
-    <select id="team"></select>
-    <label for="pin">4-digit PIN</label>
-    <input id="pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Enter PIN">
-    <button id="loginBtn" onclick="login()">Unlock</button>
-    <div id="msg" class="muted" style="margin-top:10px"></div>
-  </div>
-</div>
+</main>
+
 
 <script src="config.js"></script>
 
@@ -275,9 +214,10 @@ try{
 
 
 let D=null;
-let publicD=null;
-let pendingProtected=null;
-let currentView={type:'home'};
+
+let currentView={
+  type:'schedule'
+};
 
 
 const $=s=>document.querySelector(s);
@@ -408,23 +348,65 @@ async function rpc(name,body){
 
 async function login(){
 
-  const btn=$('#loginBtn');
-  $('#msg').className='muted';
-  $('#msg').textContent='Signing in…';
+  const btn=
+    $('#loginBtn');
+
+  $('#msg').className=
+    'muted';
+
+  $('#msg').textContent=
+    'Signing in…';
+
   btn.disabled=true;
 
+
   try{
-    const r=await rpc('pkgl_login',{p_team:$('#team').value,p_pin:$('#pin').value});
+
+    const r=
+      await rpc(
+        'pkgl_login',
+        {
+          p_team:
+            $('#team').value,
+
+          p_pin:
+            $('#pin').value
+        }
+      );
+
+
     token=r.token;
+
     user=r;
-    localStorage.setItem('pkgl_token',token);
-    localStorage.setItem('pkgl_user',JSON.stringify(user));
+
+
+    localStorage.setItem(
+      'pkgl_token',
+      token
+    );
+
+
+    localStorage.setItem(
+      'pkgl_user',
+      JSON.stringify(user)
+    );
+
+
     await enter();
+
+
   }catch(e){
-    $('#msg').className='status error';
-    $('#msg').textContent=e.message;
+
+    $('#msg').className=
+      'status error';
+
+    $('#msg').textContent=
+      e.message;
+
   }finally{
+
     btn.disabled=false;
+
   }
 
 }
@@ -433,29 +415,68 @@ async function login(){
 async function enter(){
 
   await refreshData(false);
-  updateAccessUI();
-  closeAuthGate();
 
-  const destination=pendingProtected||'schedule';
-  pendingProtected=null;
 
-  if(destination==='documents')showDocuments();
-  else showSchedule();
+  $('#login')
+  .classList
+  .add('hidden');
+
+
+  $('#app')
+  .classList
+  .remove('hidden');
+
+
+  $('#adminTeamsBtn')
+  .classList
+  .toggle(
+    'hidden',
+    !user.is_admin
+  );
+
+
+  $('#adminCoursesBtn')
+  .classList
+  .toggle(
+    'hidden',
+    !user.is_admin
+  );
+
+
+  $('#who').innerHTML=
+    `Signed in as <b>${escapeHtml(user.team)}</b>${user.is_admin?' — Administrator':''}`;
+
+
+  showSchedule();
 
 }
 
 
 async function logout(){
 
-  try{await rpc('pkgl_logout',{p_token:token})}catch{}
+  try{
 
-  token='';
-  user=null;
-  localStorage.removeItem('pkgl_token');
-  localStorage.removeItem('pkgl_user');
-  D=publicD;
-  updateAccessUI();
-  showHome();
+    await rpc(
+      'pkgl_logout',
+      {
+        p_token:token
+      }
+    );
+
+  }catch{}
+
+
+  localStorage.removeItem(
+    'pkgl_token'
+  );
+
+
+  localStorage.removeItem(
+    'pkgl_user'
+  );
+
+
+  location.reload();
 
 }
 
@@ -463,21 +484,44 @@ async function logout(){
 async function refreshData(showMessage){
 
   try{
-    D=await rpc('pkgl_bootstrap',{p_token:token});
+
+    D=
+      await rpc(
+        'pkgl_bootstrap',
+        {
+          p_token:token
+        }
+      );
+
+
     if(showMessage){
+
       renderCurrent();
-      alert('Scores refreshed.');
+
+      alert(
+        'Scores refreshed.'
+      );
+
     }
+
+
   }catch(e){
-    if(/expired|session|token/i.test(e.message)){
-      token='';
-      user=null;
-      localStorage.removeItem('pkgl_token');
-      localStorage.removeItem('pkgl_user');
-      D=publicD;
-      updateAccessUI();
+
+    if(
+      /expired/i
+      .test(e.message)
+    ){
+
+      localStorage.clear();
+
+      location.reload();
+
+    }else{
+
+      throw e;
+
     }
-    throw e;
+
   }
 
 }
@@ -507,140 +551,87 @@ const total=
   );
 
 
-async function loadPublicData(){
-  const res=await fetch('/.netlify/functions/public-data',{cache:'no-store'});
-  const data=await res.json();
-  if(!res.ok)throw new Error(data.error||'Unable to load public league data.');
-  publicD=data;
-  if(!token||!user)D=publicD;
-  return data;
-}
-
-async function enterSite(){
-  $('#landing').classList.add('hidden');
-  $('#site').classList.remove('hidden');
-  $('#view').innerHTML='<div class="card">Loading PKGA…</div>';
-
-  try{
-    if(!publicD)await loadPublicData();
-    if(!D)D=publicD;
-    updateAccessUI();
-    showHome();
-  }catch(e){
-    $('#view').innerHTML='<div class="card"><h2>PKGA</h2><div class="status error">'+escapeHtml(e.message)+'</div></div>';
-  }
-}
-
-function updateAccessUI(){
-  const admin=!!(user&&user.is_admin);
-  const signed=!!(user&&token);
-
-  $('#adminTeamsBtn').classList.toggle('hidden',!admin);
-  $('#adminCoursesBtn').classList.toggle('hidden',!admin);
-  $('#refreshBtn').classList.toggle('hidden',!signed);
-  $('#logoutBtn').classList.toggle('hidden',!signed);
-
-  $('#who').innerHTML=signed
-    ?'Signed in as <b>'+escapeHtml(user.team)+'</b>'+(admin?' — Administrator':'')+' • Protected areas unlocked'
-    :'Public viewing • Schedule and Documents require a team PIN';
-}
-
-function showAuthGate(type){
-  pendingProtected=type;
-  $('#authTitle').textContent=type==='documents'?'Documents Access':'Schedule & Scoring Access';
-  $('#msg').className='muted';
-  $('#msg').textContent='';
-  $('#pin').value='';
-  $('#authGate').classList.remove('hidden');
-}
-
-function closeAuthGate(){
-  $('#authGate').classList.add('hidden');
-}
-
-async function openProtected(type){
-  pendingProtected=type;
-
-  if(token&&user){
-    try{
-      await refreshData(false);
-      updateAccessUI();
-      pendingProtected=null;
-      if(type==='documents')showDocuments();
-      else showSchedule();
-      return;
-    }catch(e){}
-  }
-
-  showAuthGate(type);
-}
-
-function showHome(){
-  currentView={type:'home'};
-
-  if(publicD&&!user)D=publicD;
-  if(!D){
-    $('#view').innerHTML='<div class="card">Loading league data…</div>';
-    return;
-  }
-
-  const rows=buildStandings();
-  const leader=rows[0];
-  const finalMatches=(D.matches||[]).filter(m=>m.status==='final').length;
-  const courseCount=(D.courses||[]).length;
-
-  $('#view').innerHTML=`
-    <div class="card home-hero">
-      <div class="home-hero-inner">
-        <span class="pill">Maryland Parent + Kid Golf</span>
-        <h2>Compete together.<br>Remember it forever.</h2>
-        <p>PKGA brings Maryland parents and kids together through monthly golf events, head-to-head competition, live standings, and a season-ending playoff race.</p>
-        <button onclick="openProtected('schedule')" style="background:#d71920;border:2px solid #ffcd00">Open Schedule</button>
-      </div>
-      <svg class="tee-mini" viewBox="0 0 420 250" aria-hidden="true">
-        <circle fill="#ffcd00" cx="330" cy="48" r="18"/>
-        <circle fill="#fff" cx="205" cy="60" r="27"/>
-        <path fill="#fff" d="M182 91h45l27 62-23 8-20-42-12 48-25-5 8-71z"/>
-        <path fill="#fff" d="M215 104l72-48 7 10-68 53z"/>
-        <path fill="#fff" d="M286 56l70-48 5 8-67 49z"/>
-        <circle fill="#d71920" cx="367" cy="3" r="6"/>
-        <path fill="#111" d="M0 210c105-26 188 8 284-14 55-12 91-11 136-4v58H0z"/>
-      </svg>
-      <div class="stat-strip">
-        <div class="stat-box"><strong>${leader?escapeHtml(leader.name):'—'}</strong>Current Leader</div>
-        <div class="stat-box"><strong>${finalMatches}</strong>Final Matches</div>
-        <div class="stat-box"><strong>${courseCount}</strong>Maryland Courses</div>
-      </div>
-    </div>
-
-    <div class="quick-grid">
-      <div class="quick-card locked" onclick="openProtected('schedule')"><b>🔒 Schedule & Scoring</b><span class="muted">Team PIN required to view matchups and enter scores.</span></div>
-      <div class="quick-card" onclick="showStandings()"><b>Standings</b><span class="muted">Public season table, records and scoring stats.</span></div>
-      <div class="quick-card" onclick="showPlayoffPicture()"><b>Playoff Picture</b><span class="muted">Current seeds, projected scores and win chances.</span></div>
-      <div class="quick-card locked" onclick="openProtected('documents')"><b>🔒 Documents</b><span class="muted">Team PIN required. Only the administrator can edit files.</span></div>
-    </div>
-  `;
-}
-
 function renderCurrent(){
-  if(currentView.type==='home')showHome();
-  else if(currentView.type==='event')showEvent(currentView.id);
-  else if(currentView.type==='card')openCard(currentView.id);
-  else if(currentView.type==='standings')showStandings();
-  else if(currentView.type==='playoffs')showPlayoffPicture();
-  else if(currentView.type==='teams')showTeamManager();
-  else if(currentView.type==='courses')showCourseManager(currentView.id);
-  else if(currentView.type==='documents')showDocuments();
-  else showHome();
+
+  if(
+    currentView.type===
+    'event'
+  ){
+
+    showEvent(
+      currentView.id
+    );
+
+  }
+
+  else if(
+    currentView.type===
+    'card'
+  ){
+
+    openCard(
+      currentView.id
+    );
+
+  }
+
+  else if(
+    currentView.type===
+    'standings'
+  ){
+
+    showStandings();
+
+  }
+
+  else if(
+    currentView.type===
+    'playoffs'
+  ){
+
+    showPlayoffPicture();
+
+  }
+
+  else if(
+    currentView.type===
+    'teams'
+  ){
+
+    showTeamManager();
+
+  }
+
+  else if(
+    currentView.type===
+    'courses'
+  ){
+
+    showCourseManager(
+      currentView.id
+    );
+
+  }
+
+  else if(
+    currentView.type===
+    'documents'
+  ){
+
+    showDocuments();
+
+  }
+
+  else{
+
+    showSchedule();
+
+  }
+
 }
 
 
 function showSchedule(){
-
-  if(!token||!user){
-    openProtected('schedule');
-    return;
-  }
 
   currentView={
     type:'schedule'
@@ -1384,7 +1375,9 @@ async function saveScore(finalize){
 
 function showCourseManager(selectedId){
 
-  if(!user || !user.is_admin){
+  if(
+    !user.is_admin
+  ){
 
     alert(
       'Administrator access required.'
@@ -1629,11 +1622,6 @@ async function saveHole(
 
 async function showDocuments(){
 
-  if(!token||!user){
-    openProtected('documents');
-    return;
-  }
-
   currentView={
     type:'documents'
   };
@@ -1641,11 +1629,10 @@ async function showDocuments(){
 
   try{
 
-    const res=await fetch('/.netlify/functions/list-documents',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({token:token})
-    });
+    const res=
+      await fetch(
+        `/.netlify/functions/list-documents`
+      );
 
 
     const text=
@@ -1966,7 +1953,9 @@ async function uploadDocument(){
 
 function showTeamManager(){
 
-  if(!user || !user.is_admin){
+  if(
+    !user.is_admin
+  ){
 
     alert(
       'Administrator access required.'
@@ -3016,7 +3005,7 @@ function showPlayoffPicture(){
     <div class="card">
 
       <h3>
-        PKGA Match Predictor
+        PKGL Match Predictor
       </h3>
 
       <div class="muted">
@@ -3059,7 +3048,22 @@ if(
 }
 
 
-loadPublicData().catch(()=>{});
+if(
+  token
+  &&
+  user
+){
+
+  enter()
+  .catch(()=>{
+
+    localStorage.clear();
+
+    location.reload();
+
+  });
+
+}
 
 </script>
 
