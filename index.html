@@ -1024,23 +1024,10 @@ function showEvent(id){
     id
   };
 
-
-  const e=
-    eventBy(id);
-
-
-  const c=
-    course(
-      e.course_id
-    );
-
-
-  const ms=
-    D.matches
-    .filter(m=>
-      m.event_id===id
-    );
-
+  const e=eventBy(id);
+  const c=course(e.course_id);
+  const ms=D.matches.filter(m=>m.event_id===id);
+  const standings=buildStandings();
 
   $('#view').innerHTML=
     `
@@ -1064,9 +1051,59 @@ function showEvent(id){
         ms
         .map(m=>{
 
-          const final=
-            m.status==='final';
+          const final=m.status==='final';
 
+          const home=
+            standings.find(x=>x.id===m.home_team_id);
+
+          const away=
+            standings.find(x=>x.id===m.away_team_id);
+
+          let predictionHtml='';
+
+          if(!final && home && away){
+
+            const p=predictMatch(home,away);
+
+            const projectedWinner=
+              p.winA>p.winB
+              ?home.name
+              :p.winB>p.winA
+              ?away.name
+              :'Even';
+
+            predictionHtml=
+              `
+              <div class="banner" style="margin-top:10px">
+
+                <b>
+                  Projected Winner:
+                  ${escapeHtml(projectedWinner)}
+                </b>
+
+                <br>
+
+                <span>
+                  Projected Score:
+                  ${escapeHtml(home.name)}
+                  ${p.scoreA}
+                  –
+                  ${p.scoreB}
+                  ${escapeHtml(away.name)}
+                </span>
+
+                <br>
+
+                <span class="muted">
+                  Win chance:
+                  ${escapeHtml(home.name)} ${p.winA}%
+                  ·
+                  ${escapeHtml(away.name)} ${p.winB}%
+                </span>
+
+              </div>
+              `;
+          }
 
           return `
             <div class="match">
@@ -1098,10 +1135,12 @@ function showEvent(id){
                     </span>
                   `
 
-                  :'Not submitted'
+                  :'Upcoming'
                 }
 
               </div>
+
+              ${predictionHtml}
 
               <button
                 onclick="openCard('${m.id}')">
