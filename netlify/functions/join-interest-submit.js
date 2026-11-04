@@ -1,90 +1,14 @@
 const { randomUUID } = require("crypto");
 
-const BUCKET = "pkgl-join-interest";
+const STORE_NAME = "pkgl-join-interest";
 
 function clean(value,max=120){
   return String(value||"").trim().slice(0,max);
 }
 
-function wait(ms){
-  return new Promise(resolve=>setTimeout(resolve,ms));
-}
-
-function storageMessage(text,fallback){
-  if(!text)return fallback;
-  try{
-    const parsed=JSON.parse(text);
-    return parsed.message||parsed.error||fallback;
-  }catch{
-    return fallback;
-  }
-}
-
-function storageHeaders(SERVICE_KEY,includeJson=true){
-  return {
-    apikey:SERVICE_KEY,
-    Authorization:`Bearer ${SERVICE_KEY}`,
-    ...(includeJson?{"Content-Type":"application/json"}:{})
-  };
-}
-
-async function bucketExists(SUPABASE_URL,SERVICE_KEY){
-  const res=await fetch(
-    `${SUPABASE_URL}/storage/v1/bucket/${encodeURIComponent(BUCKET)}`,
-    {headers:storageHeaders(SERVICE_KEY)}
-  );
-
-  if(res.ok)return true;
-  if(res.status===404)return false;
-
-  const text=await res.text();
-  throw new Error(storageMessage(text,"Unable to check interest-list storage."));
-}
-
-async function ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY){
-  if(await bucketExists(SUPABASE_URL,SERVICE_KEY))return;
-
-  const create=await fetch(
-    `${SUPABASE_URL}/storage/v1/bucket`,
-    {
-      method:"POST",
-      headers:storageHeaders(SERVICE_KEY),
-      body:JSON.stringify({
-        id:BUCKET,
-        name:BUCKET,
-        public:false
-      })
-    }
-  );
-
-  if(!create.ok){
-    const text=await create.text();
-    if(!/already exists|duplicate/i.test(text)){
-      throw new Error(storageMessage(text,"Unable to create interest-list storage."));
-    }
-  }
-
-  for(let attempt=0;attempt<5;attempt++){
-    if(await bucketExists(SUPABASE_URL,SERVICE_KEY))return;
-    await wait(150*(attempt+1));
-  }
-
-  throw new Error("Interest-list storage is not ready yet. Please try again.");
-}
-
-async function uploadRecord(SUPABASE_URL,SERVICE_KEY,fileName,record){
-  return fetch(
-    `${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(BUCKET)}/${encodeURIComponent(fileName)}`,
-    {
-      method:"POST",
-      headers:{
-        ...storageHeaders(SERVICE_KEY,false),
-        "Content-Type":"application/json",
-        "x-upsert":"false"
-      },
-      body:JSON.stringify(record)
-    }
-  );
+async function getInterestStore(){
+  const { getStore } = await import("@netlify/blobs");
+  return getStore(STORE_NAME);
 }
 
 exports.handler = async function(event){
@@ -95,13 +19,6 @@ exports.handler = async function(event){
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({error:"Method not allowed"})
       };
-    }
-
-    const SUPABASE_URL=process.env.SUPABASE_URL;
-    const SERVICE_KEY=process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if(!SUPABASE_URL||!SERVICE_KEY){
-      throw new Error("Server configuration is missing.");
     }
 
     const body=JSON.parse(event.body||"{}");
@@ -126,7 +43,16 @@ exports.handler = async function(event){
       submitted_at:new Date().toISOString()
     };
 
-    for(const key of ["first_name","last_name","approximate_handicap","kid_name","kid_age","city_of_residence","email","phone"]){
+    for(const key of [
+      "first_name",
+      "last_name",
+      "approximate_handicap",
+      "kid_name",
+      "kid_age",
+      "city_of_residence",
+      "email",
+      "phone"
+    ]){
       if(!record[key]){
         return {
           statusCode:400,
@@ -137,6 +63,7 @@ exports.handler = async function(event){
     }
 
     const age=Number(record.kid_age);
+
     if(!Number.isFinite(age)||age<4||age>18){
       return {
         statusCode:400,
@@ -153,47 +80,24 @@ exports.handler = async function(event){
       };
     }
 
-    await ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY);
+    const store=await getInterestStore();
 
-    const fileName=
+    const key=
       record.submitted_at.replace(/[:.]/g,"-")
       +"-"
       +randomUUID()
       +".json";
 
-    let upload=await uploadRecord(
-      SUPABASE_URL,
-      SERVICE_KEY,
-      fileName,
-      record
-    );
-
-    if(!upload.ok){
-      const firstError=await upload.text();
-
-      if(
-        upload.status===404
-        ||
-        /bucket.*not found|NoSuchBucket/i.test(firstError)
-      ){
-        await ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY);
-        await wait(250);
-
-        upload=await uploadRecord(
-          SUPABASE_URL,
-          SERVICE_KEY,
-          fileName,
-          record
-        );
-      }else{
-        throw new Error(storageMessage(firstError,"Unable to save the interest form."));
+    await store.set(
+      key,
+      JSON.stringify(record),
+      {
+        onlyIfNew:true,
+        metadata:{
+          submitted_at:record.submitted_at
+        }
       }
-    }
-
-    if(!upload.ok){
-      const text=await upload.text();
-      throw new Error(storageMessage(text,"Unable to save the interest form."));
-    }
+    );
 
     return {
       statusCode:200,
@@ -204,6 +108,8 @@ exports.handler = async function(event){
       body:JSON.stringify({success:true})
     };
   }catch(error){
+    console.error("join-interest-submit",error);
+
     return {
       statusCode:500,
       headers:{
@@ -211,7 +117,7 @@ exports.handler = async function(event){
         "Cache-Control":"no-store, max-age=0"
       },
       body:JSON.stringify({
-        error:error.message||"Unable to submit the form."
+        error:"We could not save your information. Please try again."
       })
     };
   }

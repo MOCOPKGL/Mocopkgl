@@ -931,7 +931,11 @@ async function submitJoinInterest(event){
         }catch(e){}
       }
 
-      if(/bucket.*not found|NoSuchBucket/i.test(String(message))){
+      if(
+        /bucket.*not found|NoSuchBucket/i.test(String(message))
+        ||
+        response.status>=500
+      ){
         message='We could not save your information. Please try again.';
       }
 
