@@ -1347,6 +1347,57 @@ function rankingsBeforeEvent(eventOrder){
 
 function matchOfMonthForEvent(e){
 
+  const eventOrder=
+    Number(e.event_order)||0;
+
+
+  if(eventOrder>1){
+
+    const previousEvent=
+      D.events.find(
+        x=>
+        Number(x.event_order)===
+        eventOrder-1
+      );
+
+
+    if(!previousEvent){
+      return null;
+    }
+
+
+    const previousMatches=
+      D.matches.filter(
+        m=>
+        m.event_id===previousEvent.id
+      );
+
+
+    const previousFinals=
+      previousMatches.filter(
+        m=>
+        m.status==='final'
+      ).length;
+
+
+    const requiredFinals=
+      Math.ceil(
+        previousMatches.length/2
+      );
+
+
+    if(
+      !previousMatches.length
+      ||
+      previousFinals<requiredFinals
+    ){
+
+      return null;
+
+    }
+
+  }
+
   const matches=
     D.matches
     .filter(m=>
