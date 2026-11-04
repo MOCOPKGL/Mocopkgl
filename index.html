@@ -253,6 +253,61 @@ a{color:#b40f15;font-weight:800}
   color:#188038;
   font-weight:900
 }
+.match-month-mini{
+  margin-top:12px;
+  padding:9px 10px;
+  background:#111;
+  color:#fff;
+  border-left:4px solid var(--gold);
+  font-size:12px;
+  font-weight:900;
+  line-height:1.35
+}
+.match-month-mini span{
+  color:#f0c14b
+}
+.match-month-feature{
+  background:linear-gradient(135deg,#111,#25282d);
+  color:#fff;
+  border-left:7px solid var(--gold);
+  padding:16px;
+  margin:14px 0 18px;
+  border-radius:4px
+}
+.match-month-kicker{
+  color:#f0c14b;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.6px
+}
+.match-month-teams{
+  font-size:22px;
+  font-weight:900;
+  margin-top:6px;
+  line-height:1.25
+}
+.match-month-meta{
+  margin-top:7px;
+  color:#d7dbe0;
+  font-size:12px;
+  font-weight:700
+}
+.match-of-month-highlight{
+  border-left-color:var(--gold);
+  box-shadow:0 0 0 2px #d4a72c33,0 2px 8px #00000012
+}
+.match-month-tag{
+  display:inline-block;
+  margin-bottom:8px;
+  padding:3px 6px;
+  background:#111;
+  color:#f0c14b;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.4px
+}
 @media(max-width:650px){
   .schedule-match{padding:14px}
   .schedule-match .teams{font-size:17px}
@@ -1208,6 +1263,309 @@ function compareMonthlyCountback(a,b,holeCount){
 }
 
 
+function rankingsBeforeEvent(eventOrder){
+
+  const rows={};
+
+  D.teams.forEach(t=>{
+
+    rows[t.id]={
+      id:t.id,
+      name:t.nickname,
+      gp:0,
+      w:0,
+      l:0,
+      t:0,
+      pts:0,
+      strokes:0
+    };
+
+  });
+
+
+  D.matches
+  .filter(m=>{
+
+    if(m.status!=='final')return false;
+
+    const e=eventBy(m.event_id);
+
+    return e
+      &&
+      Number(e.event_order)<Number(eventOrder);
+
+  })
+  .forEach(m=>{
+
+    const h=rows[m.home_team_id];
+    const a=rows[m.away_team_id];
+
+    if(!h||!a)return;
+
+    const hs=total(m.home_scores);
+    const as=total(m.away_scores);
+
+    h.gp++;
+    a.gp++;
+    h.strokes+=hs;
+    a.strokes+=as;
+
+    if(hs<as){
+      h.w++;
+      a.l++;
+      h.pts+=3;
+    }
+    else if(as<hs){
+      a.w++;
+      h.l++;
+      a.pts+=3;
+    }
+    else{
+      h.t++;
+      a.t++;
+      h.pts++;
+      a.pts++;
+    }
+
+  });
+
+
+  return Object.values(rows)
+  .sort(
+    (a,b)=>
+      b.pts-a.pts
+      ||
+      b.w-a.w
+      ||
+      a.strokes-b.strokes
+      ||
+      a.name.localeCompare(b.name)
+  );
+
+}
+
+
+function matchOfMonthForEvent(e){
+
+  const matches=
+    D.matches
+    .filter(m=>
+      m.event_id===e.id
+    );
+
+
+  if(!matches.length){
+    return null;
+  }
+
+
+  const rankings=
+    rankingsBeforeEvent(
+      Number(e.event_order)||0
+    );
+
+
+  const hasHistory=
+    rankings.some(r=>r.gp>0);
+
+
+  if(!hasHistory){
+
+    const first=
+      [...matches]
+      .sort(
+        (a,b)=>
+        Number(a.match_order||0)
+        -
+        Number(b.match_order||0)
+      )[0];
+
+
+    return first
+      ?{
+        match:first,
+        homeRank:null,
+        awayRank:null,
+        winHome:null,
+        winAway:null,
+        reason:'Opening-month featured matchup'
+      }
+      :null;
+
+  }
+
+
+  const rankById={};
+
+  rankings.forEach((r,i)=>{
+    rankById[r.id]=i+1;
+  });
+
+
+  const n=
+    Math.max(
+      rankings.length,
+      2
+    );
+
+
+  const candidates=
+    matches.map(m=>{
+
+      const home=
+        rankings.find(
+          r=>r.id===m.home_team_id
+        );
+
+      const away=
+        rankings.find(
+          r=>r.id===m.away_team_id
+        );
+
+
+      const homeRank=
+        rankById[m.home_team_id]
+        ||n;
+
+      const awayRank=
+        rankById[m.away_team_id]
+        ||n;
+
+
+      const rankSum=
+        homeRank+awayRank;
+
+
+      const rankGap=
+        Math.abs(
+          homeRank-awayRank
+        );
+
+
+      const rankStrength=
+        Math.max(
+          0,
+          Math.min(
+            1,
+            (
+              (2*n-1)
+              -
+              rankSum
+            )
+            /
+            Math.max(
+              1,
+              2*n-4
+            )
+          )
+        );
+
+
+      const proximity=
+        n<=2
+        ?1
+        :Math.max(
+          0,
+          1-
+          (
+            Math.max(
+              1,
+              rankGap
+            )
+            -1
+          )
+          /
+          (n-2)
+        );
+
+
+      let competitiveness=.5;
+      let winHome=null;
+      let winAway=null;
+
+
+      if(home&&away){
+
+        const p=
+          predictMatchBeforeEvent(
+            home,
+            away,
+            Number(e.event_order)||0
+          );
+
+
+        if(
+          p.scoreA!=='—'
+          &&
+          p.scoreB!=='—'
+        ){
+
+          winHome=p.winA;
+          winAway=p.winB;
+
+          competitiveness=
+            Math.max(
+              0,
+              1-
+              Math.abs(
+                p.winA-p.winB
+              )
+              /70
+            );
+
+        }
+
+      }
+
+
+      const featureScore=
+        rankStrength*60
+        +
+        competitiveness*25
+        +
+        proximity*15;
+
+
+      return{
+        match:m,
+        homeRank,
+        awayRank,
+        winHome,
+        winAway,
+        featureScore
+      };
+
+    });
+
+
+  candidates.sort(
+    (a,b)=>
+      b.featureScore-a.featureScore
+      ||
+      (a.homeRank+a.awayRank)
+      -
+      (b.homeRank+b.awayRank)
+      ||
+      Number(a.match.match_order||0)
+      -
+      Number(b.match.match_order||0)
+  );
+
+
+  const best=candidates[0];
+
+
+  return best
+    ?{
+      ...best,
+      reason:
+        'Selected by pre-event ranking strength, projected competitiveness, and ranking proximity'
+    }
+    :null;
+
+}
+
+
 function showSchedule(){
 
   currentView={
@@ -1444,6 +1802,10 @@ function showSchedule(){
             .length;
 
 
+          const featured=
+            matchOfMonthForEvent(e);
+
+
           return `
             <div
               class="card event"
@@ -1466,7 +1828,19 @@ function showSchedule(){
                 matches final
               </p>
 
-              <div class="muted">
+              ${featured
+                ?`
+                  <div class="match-month-mini">
+                    <span>🔥 Match of the Month</span><br>
+                    ${escapeHtml(featured.match.home_team)}
+                    vs
+                    ${escapeHtml(featured.match.away_team)}
+                  </div>
+                `
+                :''
+              }
+
+              <div class="muted" style="margin-top:10px">
                 Tap to view matches
               </div>
 
@@ -1894,6 +2268,7 @@ function showEvent(id){
   const c=course(e.course_id);
   const ms=D.matches.filter(m=>m.event_id===id);
   const standings=buildStandings();
+  const featured=matchOfMonthForEvent(e);
 
   $('#view').innerHTML=
     `
@@ -1913,11 +2288,47 @@ function showEvent(id){
         ${escapeHtml(c.name)}
       </h2>
 
+      ${featured
+        ?`
+          <div class="match-month-feature">
+            <div class="match-month-kicker">
+              🔥 Match of the Month
+            </div>
+
+            <div class="match-month-teams">
+              ${featured.homeRank
+                ?`#${featured.homeRank} `
+                :''
+              }${escapeHtml(featured.match.home_team)}
+              <span style="color:#9ba1a8;font-size:13px">vs</span>
+              ${featured.awayRank
+                ?`#${featured.awayRank} `
+                :''
+              }${escapeHtml(featured.match.away_team)}
+            </div>
+
+            <div class="match-month-meta">
+              ${featured.winHome!==null
+                ?`Pre-event projection: ${featured.winHome}% – ${featured.winAway}% · `
+                :''
+              }
+              ${escapeHtml(featured.reason)}
+            </div>
+          </div>
+        `
+        :''
+      }
+
       ${
         ms
         .map(m=>{
 
           const final=m.status==='final';
+
+          const isFeatured=
+            featured
+            &&
+            featured.match.id===m.id;
 
           const home=
             standings.find(x=>x.id===m.home_team_id);
@@ -1995,7 +2406,12 @@ function showEvent(id){
           }
 
           return `
-            <div class="schedule-match">
+            <div class="schedule-match ${isFeatured?'match-of-month-highlight':''}">
+
+              ${isFeatured
+                ?'<div class="match-month-tag">🔥 Match of the Month</div>'
+                :''
+              }
 
               <div class="teams">
 
