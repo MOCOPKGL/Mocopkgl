@@ -163,6 +163,33 @@ a{color:#b40f15;font-weight:800}
   .tee-scene{margin:0 -15px}
 }
 
+
+/* PKGA clean entry + season dashboard */
+.landing{background:linear-gradient(135deg,#080808 0 58%,#3b090b 58% 76%,#ffcd00 76% 78%,#111 78%);padding:24px}
+.landing:before{display:none}
+.landing-simple{width:min(660px,100%);padding:28px 24px 34px;background:#0b0b0bf2;border:1px solid #ffffff26}
+.landing-simple .landing-logo{width:min(330px,72vw);margin-top:20px}
+.landing-simple .landing-title{margin:18px auto 28px;font-size:clamp(30px,5vw,46px)}
+.landing-simple .enter-btn{margin:0;background:#d71920;border:2px solid #ffcd00;min-width:180px}
+.dashboard-intro{display:flex;align-items:center;gap:16px}
+.dashboard-intro img{width:96px;height:96px;object-fit:contain}
+.dashboard-intro h2{border:0;padding:0;margin:0;font-size:27px}
+.dashboard-intro .md-label{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#d71920;margin-top:5px}
+.season-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.season-stat{background:#171717;color:#fff;border-top:5px solid #ffcd00;padding:16px;text-align:center}
+.season-stat strong{display:block;font-size:30px;color:#ffcd00;line-height:1;margin-bottom:8px}
+.season-stat span{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}
+.totm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.totm-card{background:#fff;border:1px solid var(--line);border-left:6px solid #d71920;padding:14px}
+.totm-card .month{font-size:11px;font-weight:900;text-transform:uppercase;color:#6b7078;letter-spacing:.6px}
+.totm-card .winner{font-size:18px;font-weight:900;margin-top:3px}
+.totm-card .totm-score{display:block;margin-top:4px;font-size:12px;color:#6b7078}
+.stats-note{font-size:11px;color:#6b7078;margin-top:8px}
+@media(max-width:760px){
+  .season-stats{grid-template-columns:1fr 1fr}
+  .dashboard-intro img{width:74px;height:74px}
+  .dashboard-intro h2{font-size:22px}
+}
 </style>
 </head>
 
@@ -170,31 +197,11 @@ a{color:#b40f15;font-weight:800}
 <body>
 
 <section id="landing" class="landing">
-  <div class="landing-shell">
+  <div class="landing-shell landing-simple">
     <div class="md-ribbon"></div>
     <img src="pkga-logo.webp" class="landing-logo" alt="PKGA Parent Kid Golf Association logo">
-    <div class="landing-kicker">Maryland • Parent + Kid Golf</div>
     <h1 class="landing-title">Parent Kid Golf Association</h1>
-    <p class="landing-copy">Maryland families competing together, connecting on the course, and creating memories that last.</p>
-    <div class="md-symbols">
-      <div class="md-flag-mini" aria-label="Maryland flag inspired graphic"><span></span><span></span><span></span><span></span></div>
-      <svg class="md-map" viewBox="0 0 330 150" role="img" aria-label="Maryland map">
-        <path d="M15 48 L103 48 L109 33 L151 36 L160 27 L181 32 L198 48 L218 45 L231 55 L247 52 L260 68 L285 74 L314 69 L306 84 L286 89 L278 103 L255 96 L244 111 L223 104 L210 116 L190 109 L176 127 L160 113 L143 119 L132 102 L113 105 L99 91 L76 94 L66 78 L40 82 L25 67 Z"/>
-      </svg>
-      <div class="md-crab" aria-label="Maryland crab">🦀</div>
-    </div>
     <button class="enter-btn" onclick="enterSite()">ENTER</button>
-    <div class="tee-scene" aria-label="Golfer teeing off">
-      <svg viewBox="0 0 900 190" preserveAspectRatio="xMidYMid slice">
-        <path class="tee-ground" d="M0 151 C180 126 330 164 470 143 C620 121 760 146 900 126 L900 190 L0 190 Z"/>
-        <circle class="tee-accent" cx="690" cy="38" r="16"/>
-        <path class="tee-golfer" d="M420 38c17 0 29 13 29 29s-12 29-29 29-29-13-29-29 12-29 29-29zm-15 60 35 0 20 45-17 6-17-32-8 34-20-3 7-50zm19 10 52-31 6 9-48 39z"/>
-        <path class="tee-golfer" d="M478 79 L535 24 L541 30 L486 87 Z"/>
-        <circle class="tee-red" cx="548" cy="17" r="5"/>
-        <rect class="tee-accent" x="537" y="136" width="3" height="18"/>
-        <circle fill="#fff" cx="538.5" cy="133" r="3.5"/>
-      </svg>
-    </div>
   </div>
 </section>
 
@@ -575,6 +582,79 @@ async function openProtected(type){
   showAuthGate(type);
 }
 
+function getMonthlyWinners(data){
+  const source=data||D;
+  if(!source)return [];
+
+  return (source.events||[]).map(e=>{
+    const finals=(source.matches||[]).filter(m=>m.event_id===e.id&&m.status==='final');
+
+    let totalMatches=0;
+    if(Array.isArray(source.event_match_counts)){
+      const count=source.event_match_counts.find(x=>x.event_id===e.id);
+      totalMatches=count?Number(count.total_matches||0):0;
+    }else{
+      totalMatches=(source.matches||[]).filter(m=>m.event_id===e.id).length;
+    }
+
+    if(!finals.length||!totalMatches||finals.length!==totalMatches)return null;
+
+    const teamScores=[];
+    finals.forEach(m=>{
+      teamScores.push({team:m.home_team,score:total(m.home_scores)});
+      teamScores.push({team:m.away_team,score:total(m.away_scores)});
+    });
+
+    teamScores.sort((a,b)=>a.score-b.score||String(a.team).localeCompare(String(b.team)));
+    const winner=teamScores[0];
+
+    return winner?{
+      month:e.month_name,
+      team:winner.team,
+      score:winner.score
+    }:null;
+  }).filter(Boolean);
+}
+
+function getSeasonStats(data){
+  const source=data||D;
+  if(!source)return{matches:0,pars:0,birdies:0,hours:0};
+
+  const finals=(source.matches||[]).filter(m=>m.status==='final');
+  let pars=0;
+  let birdies=0;
+  let hours=0;
+
+  finals.forEach(m=>{
+    const e=(source.events||[]).find(x=>x.id===m.event_id);
+    const c=e?(source.courses||[]).find(x=>x.id===e.course_id):null;
+    const holes=(c&&c.holes)||[];
+
+    // Estimate: about 2 hours per 9 holes for each parent-kid team.
+    // Each match has two family teams, so a 9-hole match contributes ~4 parent-kid hours.
+    hours+=holes.length?(holes.length/9)*4:0;
+
+    holes.forEach((hole,i)=>{
+      const hs=Number((m.home_scores||[])[i]);
+      const as=Number((m.away_scores||[])[i]);
+
+      [hs,as].forEach(score=>{
+        if(!Number.isFinite(score)||score<1)return;
+        const diff=score-Number(hole.par);
+        if(diff===0)pars++;
+        else if(diff===-1)birdies++;
+      });
+    });
+  });
+
+  return{
+    matches:finals.length,
+    pars,
+    birdies,
+    hours:Math.round(hours)
+  };
+}
+
 function showHome(){
   currentView={type:'home'};
 
@@ -584,40 +664,41 @@ function showHome(){
     return;
   }
 
-  const rows=buildStandings();
-  const leader=rows[0];
-  const finalMatches=(D.matches||[]).filter(m=>m.status==='final').length;
-  const courseCount=(D.courses||[]).length;
+  const stats=getSeasonStats(D);
+  const winners=getMonthlyWinners(D);
 
   $('#view').innerHTML=`
-    <div class="card home-hero">
-      <div class="home-hero-inner">
-        <span class="pill">Maryland Parent + Kid Golf</span>
-        <h2>Compete together.<br>Remember it forever.</h2>
-        <p>PKGA brings Maryland parents and kids together through monthly golf events, head-to-head competition, live standings, and a season-ending playoff race.</p>
-        <button onclick="openProtected('schedule')" style="background:#d71920;border:2px solid #ffcd00">Open Schedule</button>
-      </div>
-      <svg class="tee-mini" viewBox="0 0 420 250" aria-hidden="true">
-        <circle fill="#ffcd00" cx="330" cy="48" r="18"/>
-        <circle fill="#fff" cx="205" cy="60" r="27"/>
-        <path fill="#fff" d="M182 91h45l27 62-23 8-20-42-12 48-25-5 8-71z"/>
-        <path fill="#fff" d="M215 104l72-48 7 10-68 53z"/>
-        <path fill="#fff" d="M286 56l70-48 5 8-67 49z"/>
-        <circle fill="#d71920" cx="367" cy="3" r="6"/>
-        <path fill="#111" d="M0 210c105-26 188 8 284-14 55-12 91-11 136-4v58H0z"/>
-      </svg>
-      <div class="stat-strip">
-        <div class="stat-box"><strong>${leader?escapeHtml(leader.name):'—'}</strong>Current Leader</div>
-        <div class="stat-box"><strong>${finalMatches}</strong>Final Matches</div>
-        <div class="stat-box"><strong>${courseCount}</strong>Maryland Courses</div>
+    <div class="card">
+      <div class="dashboard-intro">
+        <img src="pkga-logo.webp" alt="PKGA logo">
+        <div>
+          <h2>Parent Kid Golf Association</h2>
+          <div class="md-label">Maryland</div>
+        </div>
       </div>
     </div>
 
-    <div class="quick-grid">
-      <div class="quick-card locked" onclick="openProtected('schedule')"><b>🔒 Schedule & Scoring</b><span class="muted">Team PIN required to view matchups and enter scores.</span></div>
-      <div class="quick-card" onclick="showStandings()"><b>Standings</b><span class="muted">Public season table, records and scoring stats.</span></div>
-      <div class="quick-card" onclick="showPlayoffPicture()"><b>Playoff Picture</b><span class="muted">Current seeds, projected scores and win chances.</span></div>
-      <div class="quick-card locked" onclick="openProtected('documents')"><b>🔒 Documents</b><span class="muted">Team PIN required. Only the administrator can edit files.</span></div>
+    <div class="season-stats">
+      <div class="season-stat"><strong>${stats.matches}</strong><span>Total Matches Played</span></div>
+      <div class="season-stat"><strong>${stats.pars}</strong><span>Total Pars</span></div>
+      <div class="season-stat"><strong>${stats.birdies}</strong><span>Total Birdies</span></div>
+      <div class="season-stat"><strong>${stats.hours}</strong><span>Est. Parent-Kid Hours</span></div>
+    </div>
+    <div class="stats-note">Estimated parent-kid hours use approximately 2 hours per 9 holes for each family team.</div>
+
+    <div class="card">
+      <h2>🏆 Team of the Month</h2>
+      ${
+        winners.length
+        ?`<div class="totm-grid">${winners.map(w=>`
+            <div class="totm-card">
+              <div class="month">${escapeHtml(w.month)}</div>
+              <div class="winner">${escapeHtml(w.team)}</div>
+              <span class="totm-score">Score: ${w.score}</span>
+            </div>
+          `).join('')}</div>`
+        :'<div class="muted">Team of the Month will appear after every match for a month has been completed.</div>'
+      }
     </div>
   `;
 }
