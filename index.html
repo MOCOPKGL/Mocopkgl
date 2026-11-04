@@ -235,6 +235,20 @@ a{color:#b40f15;font-weight:800}
   font-size:14px;
   font-weight:900
 }
+.prediction-result{
+  display:inline-block;
+  margin-left:8px;
+  padding:4px 7px;
+  border-radius:3px;
+  font-size:11px;
+  font-weight:900;
+  vertical-align:middle;
+  text-transform:uppercase;
+  letter-spacing:.25px
+}
+.prediction-correct{background:#e7f5e9;color:#185c26}
+.prediction-missed{background:#f9e8e8;color:#8d2525}
+.prediction-na{background:#eceff2;color:#6b7078}
 @media(max-width:650px){
   .schedule-match{padding:14px}
   .schedule-match .teams{font-size:17px}
@@ -1283,6 +1297,401 @@ function showSchedule(){
 }
 
 
+function buildStandingsBeforeEvent(eventOrder){
+
+  const s={};
+
+  D.teams.forEach(t=>{
+
+    s[t.id]={
+      id:t.id,
+      name:t.nickname,
+      gp:0,
+      w:0,
+      l:0,
+      t:0,
+      pts:0
+    };
+
+  });
+
+
+  D.matches
+  .filter(m=>{
+
+    if(m.status!=='final')return false;
+
+    const e=eventBy(m.event_id);
+
+    return e
+      &&
+      Number(e.event_order)<Number(eventOrder);
+
+  })
+  .forEach(m=>{
+
+    const h=s[m.home_team_id];
+    const a=s[m.away_team_id];
+
+    if(!h||!a)return;
+
+    const x=total(m.home_scores);
+    const y=total(m.away_scores);
+
+    h.gp++;
+    a.gp++;
+
+    if(x<y){
+
+      h.w++;
+      a.l++;
+      h.pts+=3;
+
+    }
+    else if(y<x){
+
+      a.w++;
+      h.l++;
+      a.pts+=3;
+
+    }
+    else{
+
+      h.t++;
+      a.t++;
+      h.pts++;
+      a.pts++;
+
+    }
+
+  });
+
+
+  return Object.values(s);
+
+}
+
+
+function teamProjectionBeforeEvent(
+  teamId,
+  eventOrder
+){
+
+  const games=
+    D.matches
+
+    .filter(m=>{
+
+      if(
+        m.status!=='final'
+        ||
+        (
+          m.home_team_id!==teamId
+          &&
+          m.away_team_id!==teamId
+        )
+      ){
+
+        return false;
+
+      }
+
+      const e=eventBy(m.event_id);
+
+      return e
+        &&
+        Number(e.event_order)<Number(eventOrder);
+
+    })
+
+    .map(m=>{
+
+      const e=eventBy(m.event_id);
+      const c=course(e.course_id);
+      const holes=(c&&c.holes)||[];
+
+      const par=
+        holes
+        .reduce(
+          (n,h)=>
+          n+
+          Number(h.par||0),
+          0
+        );
+
+      const score=
+        m.home_team_id===teamId
+        ?total(m.home_scores)
+        :total(m.away_scores);
+
+      return{
+        order:Number(e.event_order)||0,
+        diffPerHole:
+          holes.length
+          ?(score-par)/holes.length
+          :0
+      };
+
+    })
+
+    .sort(
+      (a,b)=>
+      a.order-b.order
+    );
+
+
+  if(!games.length){
+
+    return{
+      games:0,
+      projected:null
+    };
+
+  }
+
+
+  const average=
+    games.reduce(
+      (n,g)=>
+      n+g.diffPerHole,
+      0
+    )
+    /
+    games.length;
+
+
+  const recentGames=
+    games.slice(-3);
+
+
+  const recent=
+    recentGames.reduce(
+      (n,g)=>
+      n+g.diffPerHole,
+      0
+    )
+    /
+    recentGames.length;
+
+
+  const rating=
+    (average*.65)
+    +
+    (recent*.35);
+
+
+  return{
+    games:games.length,
+    projected:
+      34+
+      (rating*9)
+  };
+
+}
+
+
+function predictMatchBeforeEvent(
+  a,
+  b,
+  eventOrder
+){
+
+  const pa=
+    teamProjectionBeforeEvent(
+      a.id,
+      eventOrder
+    );
+
+  const pb=
+    teamProjectionBeforeEvent(
+      b.id,
+      eventOrder
+    );
+
+
+  if(
+    pa.projected===null
+    ||
+    pb.projected===null
+  ){
+
+    return{
+      scoreA:'—',
+      scoreB:'—',
+      winA:50,
+      winB:50
+    };
+
+  }
+
+
+  const recordA=
+    a.gp
+    ?a.pts/(a.gp*3)
+    :.5;
+
+
+  const recordB=
+    b.gp
+    ?b.pts/(b.gp*3)
+    :.5;
+
+
+  const strengthA=
+    pa.projected
+    -
+    (
+      (recordA-.5)
+      *
+      1.5
+    );
+
+
+  const strengthB=
+    pb.projected
+    -
+    (
+      (recordB-.5)
+      *
+      1.5
+    );
+
+
+  let winA=
+    100
+    /
+    (
+      1+
+      Math.exp(
+        (
+          strengthA
+          -
+          strengthB
+        )
+        /
+        1.8
+      )
+    );
+
+
+  winA=
+    Math.max(
+      15,
+      Math.min(
+        85,
+        winA
+      )
+    );
+
+
+  return{
+    scoreA:
+      Math.round(
+        pa.projected
+      ),
+    scoreB:
+      Math.round(
+        pb.projected
+      ),
+    winA:
+      Math.round(
+        winA
+      ),
+    winB:
+      100-
+      Math.round(
+        winA
+      )
+  };
+
+}
+
+
+function completedPredictionBadge(
+  m,
+  event
+){
+
+  const rows=
+    buildStandingsBeforeEvent(
+      Number(event.event_order)||0
+    );
+
+  const home=
+    rows.find(
+      x=>x.id===m.home_team_id
+    );
+
+  const away=
+    rows.find(
+      x=>x.id===m.away_team_id
+    );
+
+
+  if(!home||!away){
+
+    return '';
+
+  }
+
+
+  const p=
+    predictMatchBeforeEvent(
+      home,
+      away,
+      Number(event.event_order)||0
+    );
+
+
+  if(
+    p.scoreA==='—'
+    ||
+    p.scoreB==='—'
+  ){
+
+    return '<span class="prediction-result prediction-na">Prediction unavailable</span>';
+
+  }
+
+
+  const predicted=
+    Number(p.scoreA)<Number(p.scoreB)
+    ?m.home_team_id
+    :Number(p.scoreB)<Number(p.scoreA)
+    ?m.away_team_id
+    :'tie';
+
+
+  const homeTotal=
+    total(
+      m.home_scores
+    );
+
+  const awayTotal=
+    total(
+      m.away_scores
+    );
+
+
+  const actual=
+    homeTotal<awayTotal
+    ?m.home_team_id
+    :awayTotal<homeTotal
+    ?m.away_team_id
+    :'tie';
+
+
+  const correct=
+    predicted===actual;
+
+
+  return correct
+    ?'<span class="prediction-result prediction-correct">✅ Prediction Correct</span>'
+    :'<span class="prediction-result prediction-missed">❌ Prediction Missed</span>';
+
+}
+
+
 function showEvent(id){
 
   currentView={
@@ -1428,6 +1837,8 @@ function showEvent(id){
                     <span class="muted">
                       Final
                     </span>
+
+                    ${completedPredictionBadge(m,e)}
                   `
 
                   :'Upcoming'
