@@ -304,6 +304,13 @@ a{color:#b40f15;font-weight:800}
     </button>
 
     <button
+      id="adminJoinBtn"
+      class="gold hidden"
+      onclick="showAdminJoinList()">
+      Join Interest
+    </button>
+
+    <button
       class="secondary refresh"
       onclick="refreshData(true)">
       Refresh scores
@@ -591,6 +598,14 @@ async function enter(){
   );
 
 
+  $('#adminJoinBtn')
+  .classList
+  .toggle(
+    'hidden',
+    !user.is_admin
+  );
+
+
   $('#who').innerHTML=
     `Signed in as <b>${escapeHtml(user.team)}</b>${user.is_admin?' — Administrator':''}`;
 
@@ -727,14 +742,27 @@ async function submitJoinInterest(event){
   msg.textContent='Submitting…';
 
   try{
-    const body=new URLSearchParams(new FormData(form)).toString();
-    const response=await fetch('/',{
+    const data=Object.fromEntries(new FormData(form).entries());
+
+    const response=await fetch('/.netlify/functions/join-interest-submit',{
       method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        first_name:data.first_name||'',
+        last_name:data.last_name||'',
+        approximate_handicap:data.approximate_handicap||'',
+        kid_name:data.kid_name||'',
+        kid_age:data.kid_age||'',
+        city_of_residence:data.city_of_residence||'',
+        email:data.email||'',
+        phone:data.phone||'',
+        bot_field:data['bot-field']||''
+      })
     });
 
-    if(!response.ok)throw new Error('Unable to submit the form.');
+    const result=await response.json().catch(()=>({}));
+
+    if(!response.ok)throw new Error(result.error||'Unable to submit the form.');
 
     form.reset();
     msg.className='join-success';
@@ -948,6 +976,15 @@ function renderCurrent(){
   ){
 
     showDocuments();
+
+  }
+
+  else if(
+    currentView.type===
+    'joinlist'
+  ){
+
+    showAdminJoinList();
 
   }
 
@@ -2274,6 +2311,156 @@ async function uploadDocument(){
     alert(
       e.message
     );
+
+  }
+
+}
+
+
+async function showAdminJoinList(){
+
+  if(
+    !user
+    ||
+    !user.is_admin
+  ){
+
+    alert(
+      'Administrator access required.'
+    );
+
+    return;
+
+  }
+
+
+  currentView={
+    type:'joinlist'
+  };
+
+
+  $('#view').innerHTML=
+    `
+    <div class="card">
+
+      <h2>
+        Join Interest List
+      </h2>
+
+      <div class="muted">
+        Private administrator view.
+        Guest and team accounts cannot access these submissions.
+      </div>
+
+      <div id="joinAdminTable" class="banner">
+        Loading submissions…
+      </div>
+
+    </div>
+    `;
+
+
+  try{
+
+    const res=
+      await fetch(
+        '/.netlify/functions/join-interest-list',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            token:token
+          })
+        }
+      );
+
+
+    const data=
+      await res.json();
+
+
+    if(
+      !res.ok
+    ){
+
+      throw new Error(
+        data.error
+        ||
+        'Unable to load the interest list.'
+      );
+
+    }
+
+
+    const rows=
+      Array.isArray(data.submissions)
+      ?data.submissions
+      :[];
+
+
+    $('#joinAdminTable').className='';
+
+
+    $('#joinAdminTable').innerHTML=
+      rows.length
+
+      ?`
+        <div style="overflow:auto;margin-top:14px">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Handicap</th>
+                <th>Kid</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Email</th>
+                <th>Phone</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              ${rows.map(r=>`
+                <tr>
+                  <td>${escapeHtml(r.submitted_display||'')}</td>
+                  <td>${escapeHtml((r.first_name||'')+' '+(r.last_name||''))}</td>
+                  <td>${escapeHtml(r.approximate_handicap||'')}</td>
+                  <td>${escapeHtml(r.kid_name||'')}</td>
+                  <td>${escapeHtml(r.kid_age||'')}</td>
+                  <td>${escapeHtml(r.city_of_residence||'')}</td>
+                  <td><a href="mailto:${escapeHtml(r.email||'')}">${escapeHtml(r.email||'')}</a></td>
+                  <td><a href="tel:${escapeHtml(r.phone||'')}">${escapeHtml(r.phone||'')}</a></td>
+                </tr>
+              `).join('')}
+
+            </tbody>
+
+          </table>
+
+        </div>
+      `
+
+      :`
+        <div class="muted" style="margin-top:14px">
+          No one has joined the interest list yet.
+        </div>
+      `;
+
+
+  }catch(e){
+
+    $('#joinAdminTable').className='status error';
+
+    $('#joinAdminTable').textContent=
+      e.message;
 
   }
 
