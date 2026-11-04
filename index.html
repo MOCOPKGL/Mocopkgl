@@ -249,6 +249,10 @@ a{color:#b40f15;font-weight:800}
 .prediction-correct{background:#e7f5e9;color:#185c26}
 .prediction-missed{background:#f9e8e8;color:#8d2525}
 .prediction-na{background:#eceff2;color:#6b7078}
+.team-month-relative{
+  color:#188038;
+  font-weight:900
+}
 @media(max-width:650px){
   .schedule-match{padding:14px}
   .schedule-match .teams{font-size:17px}
@@ -913,7 +917,7 @@ function teamOfMonthHtml(items){
         <div class="guest-month-card">
           <div class="month">${escapeHtml(x.month)}</div>
           <div class="winner">${escapeHtml(x.team)}</div>
-          <span class="score">Low score: ${x.score} · ${escapeHtml(x.toParLabel||'')}</span>
+          <span class="score">Low score: ${x.score} · <span class="team-month-relative">${escapeHtml(x.toParLabel||'')}</span></span>
         </div>
       `).join('')}
     </div>
@@ -1123,7 +1127,7 @@ function showSchedule(){
 
   const monthlyWinners=
     D.events
-    .flatMap(e=>{
+    .map(e=>{
 
       const ms=
         D.matches
@@ -1147,7 +1151,7 @@ function showSchedule(){
         ms.length!==all.length
       ){
 
-        return [];
+        return null;
 
       }
 
@@ -1158,8 +1162,12 @@ function showSchedule(){
         );
 
 
+      const holes=
+        ((c&&c.holes)||[]);
+
+
       const roundPar=
-        ((c&&c.holes)||[])
+        holes
         .reduce(
           (n,h)=>
           n+
@@ -1171,14 +1179,15 @@ function showSchedule(){
       const scores={};
 
 
-      const addTeamScore=
-        (team,score)=>{
+      const addTeamRound=
+        (team,score,roundScores)=>{
 
           if(!scores[team]){
 
             scores[team]={
               score:0,
-              par:0
+              par:0,
+              birdies:0
             };
 
           }
@@ -1187,65 +1196,83 @@ function showSchedule(){
           scores[team].score+=score;
           scores[team].par+=roundPar;
 
+
+          holes.forEach((hole,i)=>{
+
+            const value=
+              Number(
+                (roundScores||[])[i]
+              );
+
+
+            if(
+              Number.isFinite(value)
+              &&
+              value>=1
+              &&
+              value===Number(hole.par)-1
+            ){
+
+              scores[team].birdies++;
+
+            }
+
+          });
+
         };
 
 
       ms.forEach(m=>{
 
-        addTeamScore(
+        addTeamRound(
           m.home_team,
-          total(m.home_scores)
+          total(m.home_scores),
+          m.home_scores
         );
 
 
-        addTeamScore(
+        addTeamRound(
           m.away_team,
-          total(m.away_scores)
+          total(m.away_scores),
+          m.away_scores
         );
 
       });
 
 
-      const entries=
-        Object.entries(scores);
+      const winner=
+        Object.entries(scores)
+        .sort(
+          (a,b)=>
+            a[1].score-b[1].score
+            ||
+            b[1].birdies-a[1].birdies
+            ||
+            a[0].localeCompare(b[0])
+        )[0];
 
 
-      if(!entries.length){
+      if(!winner){
 
-        return [];
+        return null;
 
       }
 
 
-      const lowest=
-        Math.min(
-          ...entries.map(
-            ([,v])=>
-            v.score
-          )
-        );
+      const [team,v]=winner;
 
 
-      return entries
-      .filter(
-        ([,v])=>
-        v.score===lowest
-      )
-      .sort(
-        (a,b)=>
-        a[0].localeCompare(b[0])
-      )
-      .map(
-        ([team,v])=>({
-          month:e.month_name,
-          team:team,
-          score:v.score,
-          relative:
-            v.score-v.par
-        })
-      );
+      return{
+        month:e.month_name,
+        team:team,
+        score:v.score,
+        birdies:v.birdies,
+        relative:
+          v.score-v.par
+      };
 
-    });
+    })
+    .filter(Boolean);
 
 
   const winnersHtml=
@@ -1279,7 +1306,9 @@ function showSchedule(){
                 <span class="muted">
                   Score: ${w.score}
                   ·
-                  ${formatRelativeToPar(w.relative)}
+                  <span class="team-month-relative">
+                    ${formatRelativeToPar(w.relative)}
+                  </span>
                 </span>
 
               </div>
