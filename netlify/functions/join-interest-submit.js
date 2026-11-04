@@ -1,14 +1,5 @@
-const { randomUUID } = require("crypto");
-
-const STORE_NAME = "pkgl-join-interest";
-
 function clean(value,max=120){
   return String(value||"").trim().slice(0,max);
-}
-
-async function getInterestStore(){
-  const { getStore } = await import("@netlify/blobs");
-  return getStore(STORE_NAME);
 }
 
 exports.handler = async function(event){
@@ -21,6 +12,13 @@ exports.handler = async function(event){
       };
     }
 
+    const SUPABASE_URL=process.env.SUPABASE_URL;
+    const SERVICE_KEY=process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if(!SUPABASE_URL||!SERVICE_KEY){
+      throw new Error("Server configuration is missing.");
+    }
+
     const body=JSON.parse(event.body||"{}");
 
     if(clean(body.bot_field,50)){
@@ -31,16 +29,15 @@ exports.handler = async function(event){
       };
     }
 
-    const record={
+    const row={
       first_name:clean(body.first_name,80),
       last_name:clean(body.last_name,80),
       approximate_handicap:clean(body.approximate_handicap,30),
       kid_name:clean(body.kid_name,80),
-      kid_age:clean(body.kid_age,10),
+      kid_age:Number(clean(body.kid_age,10)),
       city_of_residence:clean(body.city_of_residence,100),
       email:clean(body.email,160),
-      phone:clean(body.phone,60),
-      submitted_at:new Date().toISOString()
+      phone:clean(body.phone,60)
     };
 
     for(const key of [
@@ -48,12 +45,11 @@ exports.handler = async function(event){
       "last_name",
       "approximate_handicap",
       "kid_name",
-      "kid_age",
       "city_of_residence",
       "email",
       "phone"
     ]){
-      if(!record[key]){
+      if(!row[key]){
         return {
           statusCode:400,
           headers:{"Content-Type":"application/json"},
@@ -62,9 +58,7 @@ exports.handler = async function(event){
       }
     }
 
-    const age=Number(record.kid_age);
-
-    if(!Number.isFinite(age)||age<4||age>18){
+    if(!Number.isFinite(row.kid_age)||row.kid_age<4||row.kid_age>18){
       return {
         statusCode:400,
         headers:{"Content-Type":"application/json"},
@@ -72,7 +66,7 @@ exports.handler = async function(event){
       };
     }
 
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(record.email)){
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)){
       return {
         statusCode:400,
         headers:{"Content-Type":"application/json"},
@@ -80,24 +74,26 @@ exports.handler = async function(event){
       };
     }
 
-    const store=await getInterestStore();
-
-    const key=
-      record.submitted_at.replace(/[:.]/g,"-")
-      +"-"
-      +randomUUID()
-      +".json";
-
-    await store.set(
-      key,
-      JSON.stringify(record),
+    const response=await fetch(
+      `${SUPABASE_URL}/rest/v1/pkgl_join_interest`,
       {
-        onlyIfNew:true,
-        metadata:{
-          submitted_at:record.submitted_at
-        }
+        method:"POST",
+        headers:{
+          apikey:SERVICE_KEY,
+          Authorization:`Bearer ${SERVICE_KEY}`,
+          "Content-Type":"application/json",
+          Prefer:"return=minimal"
+        },
+        body:JSON.stringify(row)
       }
     );
+
+    const text=await response.text();
+
+    if(!response.ok){
+      console.error("join-interest insert failed",response.status,text);
+      throw new Error("Unable to save interest form.");
+    }
 
     return {
       statusCode:200,
@@ -109,7 +105,6 @@ exports.handler = async function(event){
     };
   }catch(error){
     console.error("join-interest-submit",error);
-
     return {
       statusCode:500,
       headers:{

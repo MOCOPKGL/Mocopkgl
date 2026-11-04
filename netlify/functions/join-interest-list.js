@@ -1,5 +1,3 @@
-const STORE_NAME = "pkgl-join-interest";
-
 async function getAdminSession(SUPABASE_URL,SERVICE_KEY,token){
   if(!token)return null;
 
@@ -24,11 +22,6 @@ async function getAdminSession(SUPABASE_URL,SERVICE_KEY,token){
 
   const rows=await res.json();
   return rows[0]||null;
-}
-
-async function getInterestStore(){
-  const { getStore } = await import("@netlify/blobs");
-  return getStore(STORE_NAME);
 }
 
 exports.handler = async function(event){
@@ -64,58 +57,45 @@ exports.handler = async function(event){
       };
     }
 
-    const store=await getInterestStore();
-    const listed=await store.list();
-    const blobs=Array.isArray(listed&&listed.blobs)
-      ?listed.blobs
-      :[];
+    const q=new URLSearchParams({
+      select:"first_name,last_name,approximate_handicap,kid_name,kid_age,city_of_residence,email,phone,submitted_at",
+      order:"submitted_at.desc"
+    });
 
-    const submissions=await Promise.all(
-      blobs
-        .filter(x=>x&&x.key&&x.key.endsWith(".json"))
-        .map(async blob=>{
-          try{
-            const row=await store.get(
-              blob.key,
-              {type:"json"}
-            );
-
-            if(!row||typeof row!=="object"){
-              return null;
-            }
-
-            const date=row.submitted_at
-              ?new Date(row.submitted_at)
-              :null;
-
-            return {
-              ...row,
-              submitted_display:
-                date&&!Number.isNaN(date.getTime())
-                ?date.toLocaleString(
-                  "en-US",
-                  {
-                    month:"short",
-                    day:"numeric",
-                    year:"numeric",
-                    hour:"numeric",
-                    minute:"2-digit"
-                  }
-                )
-                :""
-            };
-          }catch{
-            return null;
-          }
-        })
+    const response=await fetch(
+      `${SUPABASE_URL}/rest/v1/pkgl_join_interest?${q.toString()}`,
+      {
+        headers:{
+          apikey:SERVICE_KEY,
+          Authorization:`Bearer ${SERVICE_KEY}`
+        }
+      }
     );
 
-    submissions.sort((a,b)=>
-      String(b&&b.submitted_at||"")
-        .localeCompare(
-          String(a&&a.submitted_at||"")
-        )
-    );
+    const text=await response.text();
+
+    if(!response.ok){
+      console.error("join-interest list failed",response.status,text);
+      throw new Error("Unable to load the interest list.");
+    }
+
+    const rows=JSON.parse(text||"[]").map(row=>{
+      const date=row.submitted_at?new Date(row.submitted_at):null;
+
+      return {
+        ...row,
+        submitted_display:
+          date&&!Number.isNaN(date.getTime())
+          ?date.toLocaleString("en-US",{
+            month:"short",
+            day:"numeric",
+            year:"numeric",
+            hour:"numeric",
+            minute:"2-digit"
+          })
+          :""
+      };
+    });
 
     return {
       statusCode:200,
@@ -123,22 +103,17 @@ exports.handler = async function(event){
         "Content-Type":"application/json",
         "Cache-Control":"no-store, max-age=0"
       },
-      body:JSON.stringify({
-        submissions:submissions.filter(Boolean)
-      })
+      body:JSON.stringify({submissions:rows})
     };
   }catch(error){
     console.error("join-interest-list",error);
-
     return {
       statusCode:500,
       headers:{
         "Content-Type":"application/json",
         "Cache-Control":"no-store, max-age=0"
       },
-      body:JSON.stringify({
-        error:"Unable to load the interest list."
-      })
+      body:JSON.stringify({error:"Unable to load the interest list."})
     };
   }
 };
