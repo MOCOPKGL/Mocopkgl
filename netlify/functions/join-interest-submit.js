@@ -1,30 +1,54 @@
 const { randomUUID } = require("crypto");
 
-const BUCKET = "PKGL Join Interest";
+const BUCKET = "pkgl-join-interest";
 
-async function ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY) {
-  const headers = {
+function clean(value,max=120){
+  return String(value||"").trim().slice(0,max);
+}
+
+function wait(ms){
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+function storageMessage(text,fallback){
+  if(!text)return fallback;
+  try{
+    const parsed=JSON.parse(text);
+    return parsed.message||parsed.error||fallback;
+  }catch{
+    return fallback;
+  }
+}
+
+function storageHeaders(SERVICE_KEY,includeJson=true){
+  return {
     apikey:SERVICE_KEY,
     Authorization:`Bearer ${SERVICE_KEY}`,
-    "Content-Type":"application/json"
+    ...(includeJson?{"Content-Type":"application/json"}:{})
   };
+}
 
-  const check = await fetch(
+async function bucketExists(SUPABASE_URL,SERVICE_KEY){
+  const res=await fetch(
     `${SUPABASE_URL}/storage/v1/bucket/${encodeURIComponent(BUCKET)}`,
-    { headers }
+    {headers:storageHeaders(SERVICE_KEY)}
   );
 
-  if (check.ok) return;
+  if(res.ok)return true;
+  if(res.status===404)return false;
 
-  if (check.status !== 404) {
-    throw new Error(await check.text() || "Unable to check interest-list storage.");
-  }
+  const text=await res.text();
+  throw new Error(storageMessage(text,"Unable to check interest-list storage."));
+}
 
-  const create = await fetch(
+async function ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY){
+  if(await bucketExists(SUPABASE_URL,SERVICE_KEY))return;
+
+  const create=await fetch(
     `${SUPABASE_URL}/storage/v1/bucket`,
     {
       method:"POST",
-      headers,
+      headers:storageHeaders(SERVICE_KEY),
       body:JSON.stringify({
         id:BUCKET,
         name:BUCKET,
@@ -33,22 +57,44 @@ async function ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY) {
     }
   );
 
-  if (!create.ok) {
-    const text = await create.text();
-    if (!/already exists/i.test(text)) {
-      throw new Error(text || "Unable to create private interest-list storage.");
+  if(!create.ok){
+    const text=await create.text();
+    if(!/already exists|duplicate/i.test(text)){
+      throw new Error(storageMessage(text,"Unable to create interest-list storage."));
     }
   }
+
+  for(let attempt=0;attempt<5;attempt++){
+    if(await bucketExists(SUPABASE_URL,SERVICE_KEY))return;
+    await wait(150*(attempt+1));
+  }
+
+  throw new Error("Interest-list storage is not ready yet. Please try again.");
 }
 
-function clean(value,max=120){
-  return String(value||"").trim().slice(0,max);
+async function uploadRecord(SUPABASE_URL,SERVICE_KEY,fileName,record){
+  return fetch(
+    `${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(BUCKET)}/${encodeURIComponent(fileName)}`,
+    {
+      method:"POST",
+      headers:{
+        ...storageHeaders(SERVICE_KEY,false),
+        "Content-Type":"application/json",
+        "x-upsert":"false"
+      },
+      body:JSON.stringify(record)
+    }
+  );
 }
 
 exports.handler = async function(event){
   try{
     if(event.httpMethod!=="POST"){
-      return {statusCode:405,body:JSON.stringify({error:"Method not allowed"})};
+      return {
+        statusCode:405,
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({error:"Method not allowed"})
+      };
     }
 
     const SUPABASE_URL=process.env.SUPABASE_URL;
@@ -61,7 +107,11 @@ exports.handler = async function(event){
     const body=JSON.parse(event.body||"{}");
 
     if(clean(body.bot_field,50)){
-      return {statusCode:200,body:JSON.stringify({success:true})};
+      return {
+        statusCode:200,
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({success:true})
+      };
     }
 
     const record={
@@ -78,17 +128,29 @@ exports.handler = async function(event){
 
     for(const key of ["first_name","last_name","approximate_handicap","kid_name","kid_age","city_of_residence","email","phone"]){
       if(!record[key]){
-        return {statusCode:400,body:JSON.stringify({error:"Please complete all fields."})};
+        return {
+          statusCode:400,
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({error:"Please complete all fields."})
+        };
       }
     }
 
     const age=Number(record.kid_age);
     if(!Number.isFinite(age)||age<4||age>18){
-      return {statusCode:400,body:JSON.stringify({error:"Please enter a valid kid age."})};
+      return {
+        statusCode:400,
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({error:"Please enter a valid kid age."})
+      };
     }
 
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(record.email)){
-      return {statusCode:400,body:JSON.stringify({error:"Please enter a valid email address."})};
+      return {
+        statusCode:400,
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({error:"Please enter a valid email address."})
+      };
     }
 
     await ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY);
@@ -99,34 +161,58 @@ exports.handler = async function(event){
       +randomUUID()
       +".json";
 
-    const upload=await fetch(
-      `${SUPABASE_URL}/storage/v1/object/${encodeURIComponent(BUCKET)}/${encodeURIComponent(fileName)}`,
-      {
-        method:"POST",
-        headers:{
-          apikey:SERVICE_KEY,
-          Authorization:`Bearer ${SERVICE_KEY}`,
-          "Content-Type":"application/json",
-          "x-upsert":"false"
-        },
-        body:JSON.stringify(record)
-      }
+    let upload=await uploadRecord(
+      SUPABASE_URL,
+      SERVICE_KEY,
+      fileName,
+      record
     );
 
     if(!upload.ok){
-      throw new Error(await upload.text()||"Unable to save the interest form.");
+      const firstError=await upload.text();
+
+      if(
+        upload.status===404
+        ||
+        /bucket.*not found|NoSuchBucket/i.test(firstError)
+      ){
+        await ensurePrivateBucket(SUPABASE_URL,SERVICE_KEY);
+        await wait(250);
+
+        upload=await uploadRecord(
+          SUPABASE_URL,
+          SERVICE_KEY,
+          fileName,
+          record
+        );
+      }else{
+        throw new Error(storageMessage(firstError,"Unable to save the interest form."));
+      }
+    }
+
+    if(!upload.ok){
+      const text=await upload.text();
+      throw new Error(storageMessage(text,"Unable to save the interest form."));
     }
 
     return {
       statusCode:200,
-      headers:{"Content-Type":"application/json"},
+      headers:{
+        "Content-Type":"application/json",
+        "Cache-Control":"no-store, max-age=0"
+      },
       body:JSON.stringify({success:true})
     };
   }catch(error){
     return {
       statusCode:500,
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({error:error.message||"Unable to submit the form."})
+      headers:{
+        "Content-Type":"application/json",
+        "Cache-Control":"no-store, max-age=0"
+      },
+      body:JSON.stringify({
+        error:error.message||"Unable to submit the form."
+      })
     };
   }
 };

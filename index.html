@@ -921,7 +921,22 @@ async function submitJoinInterest(event){
 
     const result=await response.json().catch(()=>({}));
 
-    if(!response.ok)throw new Error(result.error||'Unable to submit the form.');
+    if(!response.ok){
+      let message=result.error||'Unable to submit the form.';
+
+      if(typeof message==='string'){
+        try{
+          const parsed=JSON.parse(message);
+          message=parsed.message||parsed.error||message;
+        }catch(e){}
+      }
+
+      if(/bucket.*not found|NoSuchBucket/i.test(String(message))){
+        message='We could not save your information. Please try again.';
+      }
+
+      throw new Error(message);
+    }
 
     form.reset();
     msg.className='join-success';
