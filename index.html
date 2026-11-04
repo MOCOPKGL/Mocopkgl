@@ -375,9 +375,9 @@ th:nth-child(2),td:nth-child(2){
 'use strict';
 
 
-const U=window.PKGL_CONFIG.SUPABASE_URL;
+const U=(window.PKGL_CONFIG&&window.PKGL_CONFIG.SUPABASE_URL)||"https://pnncsskkfmmamuqcilkr.supabase.co";
 
-const K=window.PKGL_CONFIG.SUPABASE_PUBLISHABLE_KEY;
+const K=(window.PKGL_CONFIG&&window.PKGL_CONFIG.SUPABASE_PUBLISHABLE_KEY)||"sb_publishable_2BI4u7jrnH_w6SR1BoIM3Q_vTtz9eHa";
 
 
 let token=localStorage.getItem('pkgl_token')||'';
