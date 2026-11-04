@@ -137,6 +137,31 @@ a{color:#b40f15;font-weight:800}
   .guest-stat strong{font-size:25px}
 }
 
+
+/* Join interest list */
+.join-cta{
+  width:100%;
+  margin-top:8px;
+  background:var(--red)!important;
+  color:#fff!important;
+  border:2px solid var(--red)!important;
+  font-size:13px
+}
+.join-cta:hover{background:var(--red2)!important}
+.join-page{max-width:680px;margin:22px auto}
+.join-page .join-head{background:#17191d;color:#fff;border-top:6px solid var(--red);padding:20px}
+.join-page .join-head h2{border:0;padding:0;margin:0 0 6px;color:#fff}
+.join-page .join-head p{margin:0;color:#cdd1d6;font-size:13px}
+.join-form{background:#fff;border:1px solid var(--line);padding:20px;box-shadow:0 1px 4px #00000014}
+.join-form .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.join-form input{margin-bottom:14px}
+.join-form .form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.join-form .privacy-note{font-size:11px;color:var(--muted);margin-top:10px}
+.join-success{background:#e7f5e9;color:#185c26;padding:12px;margin-top:12px;border-left:5px solid #2b7a3d}
+@media(max-width:650px){
+  .join-form .two-col{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 
@@ -162,6 +187,7 @@ a{color:#b40f15;font-weight:800}
 
   <button id="loginBtn" onclick="login()">Open league app</button>
   <button class="guest-enter" onclick="enterGuest()">Enter as Guest</button>
+  <button class="join-cta" onclick="showJoinPage()">Interested in Joining? — Join Interest List</button>
 
   <div id="msg" class="muted"></div>
 </section>
@@ -177,6 +203,77 @@ a{color:#b40f15;font-weight:800}
     <button class="secondary" onclick="exitGuest()">Exit Guest</button>
   </div>
   <div id="guestView"></div>
+</section>
+
+
+<section id="joinInterest" class="join-page hidden">
+  <div class="join-head">
+    <h2>Interested in Joining PKGL?</h2>
+    <p>Join the interest list and we’ll have your information when future league spots become available.</p>
+  </div>
+
+  <form
+    id="joinInterestForm"
+    class="join-form"
+    name="pkgl-join-interest"
+    method="POST"
+    data-netlify="true"
+    data-netlify-honeypot="bot-field"
+    onsubmit="submitJoinInterest(event)">
+
+    <input type="hidden" name="form-name" value="pkgl-join-interest">
+
+    <p class="hidden">
+      <label>Do not fill this out: <input name="bot-field"></label>
+    </p>
+
+    <div class="two-col">
+      <div>
+        <label for="joinFirstName">First Name</label>
+        <input id="joinFirstName" name="first_name" required autocomplete="given-name">
+      </div>
+      <div>
+        <label for="joinLastName">Last Name</label>
+        <input id="joinLastName" name="last_name" required autocomplete="family-name">
+      </div>
+    </div>
+
+    <label for="joinHandicap">Approximate Handicap</label>
+    <input id="joinHandicap" name="approximate_handicap" required placeholder="e.g., 18">
+
+    <div class="two-col">
+      <div>
+        <label for="joinKidName">Kid's Name</label>
+        <input id="joinKidName" name="kid_name" required>
+      </div>
+      <div>
+        <label for="joinKidAge">Kid's Age</label>
+        <input id="joinKidAge" name="kid_age" type="number" min="4" max="18" required>
+      </div>
+    </div>
+
+    <label for="joinCity">City of Residence</label>
+    <input id="joinCity" name="city_of_residence" required autocomplete="address-level2">
+
+    <div class="two-col">
+      <div>
+        <label for="joinEmail">Email</label>
+        <input id="joinEmail" name="email" type="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="joinPhone">Phone Number</label>
+        <input id="joinPhone" name="phone" type="tel" required autocomplete="tel">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button id="joinSubmitBtn" type="submit">Join Interest List</button>
+      <button type="button" class="secondary" onclick="hideJoinPage()">← Back</button>
+    </div>
+
+    <div id="joinFormMsg" class="muted"></div>
+    <div class="privacy-note">Your information will only be used for PKGL league-interest communication.</div>
+  </form>
 </section>
 
 
@@ -600,6 +697,55 @@ const total=
     n+(Number(v)||0),
     0
   );
+
+
+function showJoinPage(){
+  $('#login').classList.add('hidden');
+  $('#publicStats').classList.add('hidden');
+  $('#guestApp').classList.add('hidden');
+  $('#app').classList.add('hidden');
+  $('#joinInterest').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function hideJoinPage(){
+  $('#joinInterest').classList.add('hidden');
+  $('#login').classList.remove('hidden');
+  $('#publicStats').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function submitJoinInterest(event){
+  event.preventDefault();
+
+  const form=event.currentTarget;
+  const btn=$('#joinSubmitBtn');
+  const msg=$('#joinFormMsg');
+
+  btn.disabled=true;
+  msg.className='muted';
+  msg.textContent='Submitting…';
+
+  try{
+    const body=new URLSearchParams(new FormData(form)).toString();
+    const response=await fetch('/',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body
+    });
+
+    if(!response.ok)throw new Error('Unable to submit the form.');
+
+    form.reset();
+    msg.className='join-success';
+    msg.textContent='Thank you. You have been added to the PKGL interest list.';
+  }catch(e){
+    msg.className='status error';
+    msg.textContent=e.message||'Unable to submit the form.';
+  }finally{
+    btn.disabled=false;
+  }
+}
 
 
 async function loadGuestData(){
