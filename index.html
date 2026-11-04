@@ -6,178 +6,3213 @@
 <meta name="theme-color" content="#123d2b">
 <link rel="manifest" href="manifest.webmanifest">
 <title>MOCO PKGL</title>
+
 <style>
-:root{--green:#123d2b;--green2:#1f6848;--cream:#f6f3e8;--ink:#17231b;--muted:#667169;--line:#d8e0da;--gold:#d4a72c;--danger:#9d2e2e}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#e8f0ea,#f7f8f5);color:var(--ink)}
-header{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;padding:20px 16px 18px;box-shadow:0 5px 18px #0002}header .wrap,main{max-width:980px;margin:auto}h1{font-size:24px;margin:0}header p{margin:4px 0 0;opacity:.86}main{padding:14px}.card{background:#fff;border:1px solid #ffffffaa;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 8px 24px #17352212}.hidden{display:none!important}
-label{font-size:13px;font-weight:700;color:var(--muted)}input,select,button{font:inherit;border-radius:11px;border:1px solid #cbd5ce;padding:12px}input,select{width:100%;background:#fff;margin:6px 0 12px}button{border:0;background:var(--green);color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#e7eee9;color:var(--green)}button.gold{background:var(--gold);color:#241b00}button.danger{background:var(--danger)}button:disabled{opacity:.5;cursor:not-allowed}.nav{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;background:#eef4efee;padding:8px 0;z-index:2}.nav .spacer{flex:1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px}.event{cursor:pointer}.event h2{margin:0 0 5px}.pill{display:inline-block;background:#edf5ef;color:var(--green);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.muted{color:var(--muted);font-size:13px}.match{border-top:1px solid var(--line);padding:14px 0}.match:first-child{border-top:0}.teams{font-size:17px;font-weight:800}.result{font-size:22px;font-weight:900;margin:7px 0}.rule{background:#edf5ef;border-left:4px solid var(--green);padding:10px;margin:12px 0 6px;border-radius:8px}.score{display:grid;grid-template-columns:50px 58px 1fr 1fr;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}.score input{text-align:center;margin:0;font-weight:800}.score-head{font-size:12px;font-weight:800;color:var(--muted)}.total{font-size:20px;font-weight:900;line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:center}th:nth-child(2),td:nth-child(2){text-align:left}.status{padding:9px;border-radius:10px;margin-top:10px}.ok{background:#e7f5e9;color:#185c26}.error{background:#f9e8e8;color:#8d2525}.banner{background:var(--cream);border:1px solid #e8dfbd;border-radius:12px;padding:10px;margin:8px 0}.refresh{font-size:13px}
-@media(max-width:560px){.score{grid-template-columns:40px 50px 1fr 1fr}.card{padding:13px}th,td{font-size:12px;padding:8px 3px}}
+:root{
+  --green:#123d2b;
+  --green2:#1f6848;
+  --cream:#f6f3e8;
+  --ink:#17231b;
+  --muted:#667169;
+  --line:#d8e0da;
+  --gold:#d4a72c;
+  --danger:#9d2e2e
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+  background:linear-gradient(180deg,#e8f0ea,#f7f8f5);
+  color:var(--ink)
+}
+
+header{
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#fff;
+  padding:20px 16px 18px;
+  box-shadow:0 5px 18px #0002
+}
+
+header .wrap,main{
+  max-width:980px;
+  margin:auto
+}
+
+h1{
+  font-size:24px;
+  margin:0
+}
+
+header p{
+  margin:4px 0 0;
+  opacity:.86
+}
+
+main{padding:14px}
+
+.card{
+  background:#fff;
+  border:1px solid #ffffffaa;
+  border-radius:18px;
+  padding:16px;
+  margin:12px 0;
+  box-shadow:0 8px 24px #17352212
+}
+
+.hidden{display:none!important}
+
+label{
+  font-size:13px;
+  font-weight:700;
+  color:var(--muted)
+}
+
+input,select,button{
+  font:inherit;
+  border-radius:11px;
+  border:1px solid #cbd5ce;
+  padding:12px
+}
+
+input,select{
+  width:100%;
+  background:#fff;
+  margin:6px 0 12px
+}
+
+button{
+  border:0;
+  background:var(--green);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer
+}
+
+button.secondary{
+  background:#e7eee9;
+  color:var(--green)
+}
+
+button.gold{
+  background:var(--gold);
+  color:#241b00
+}
+
+button.danger{background:var(--danger)}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.nav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  background:#eef4efee;
+  padding:8px 0;
+  z-index:2
+}
+
+.nav .spacer{flex:1}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(235px,1fr));
+  gap:12px
+}
+
+.event{cursor:pointer}
+
+.event h2{margin:0 0 5px}
+
+.pill{
+  display:inline-block;
+  background:#edf5ef;
+  color:var(--green);
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:12px;
+  font-weight:800
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px
+}
+
+.match{
+  border-top:1px solid var(--line);
+  padding:14px 0
+}
+
+.match:first-child{border-top:0}
+
+.teams{
+  font-size:17px;
+  font-weight:800
+}
+
+.result{
+  font-size:22px;
+  font-weight:900;
+  margin:7px 0
+}
+
+.rule{
+  background:#edf5ef;
+  border-left:4px solid var(--green);
+  padding:10px;
+  margin:12px 0 6px;
+  border-radius:8px
+}
+
+.score{
+  display:grid;
+  grid-template-columns:50px 58px 1fr 1fr;
+  gap:8px;
+  align-items:center;
+  padding:7px 0;
+  border-bottom:1px solid var(--line)
+}
+
+.score input{
+  text-align:center;
+  margin:0;
+  font-weight:800
+}
+
+.score-head{
+  font-size:12px;
+  font-weight:800;
+  color:var(--muted)
+}
+
+.total{
+  font-size:20px;
+  font-weight:900;
+  line-height:1.5
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px
+}
+
+th,td{
+  padding:9px 6px;
+  border-bottom:1px solid var(--line);
+  text-align:center
+}
+
+th:nth-child(2),td:nth-child(2){
+  text-align:left
+}
+
+.status{
+  padding:9px;
+  border-radius:10px;
+  margin-top:10px
+}
+
+.ok{
+  background:#e7f5e9;
+  color:#185c26
+}
+
+.error{
+  background:#f9e8e8;
+  color:#8d2525
+}
+
+.banner{
+  background:var(--cream);
+  border:1px solid #e8dfbd;
+  border-radius:12px;
+  padding:10px;
+  margin:8px 0
+}
+
+.refresh{font-size:13px}
+
+.playoff-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  margin:12px 0;
+  background:#fff
+}
+
+.playoff-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center
+}
+
+.playoff-pct{
+  font-size:22px;
+  font-weight:900;
+  color:var(--green)
+}
+
+.playoff-vs{
+  text-align:center;
+  font-weight:900;
+  padding:10px 0
+}
+
+@media(max-width:560px){
+  .score{
+    grid-template-columns:40px 50px 1fr 1fr
+  }
+
+  .card{
+    padding:13px
+  }
+
+  th,td{
+    font-size:12px;
+    padding:8px 3px
+  }
+}
 </style>
 </head>
+
 <body>
-<header><div class="wrap"><h1>MOCO Parent–Kid Golf League</h1><p>Shared Cloud Scorekeeper</p></div></header>
+
+<header>
+  <div class="wrap">
+    <h1>MOCO Parent–Kid Golf League</h1>
+    <p>Shared Cloud Scorekeeper</p>
+  </div>
+</header>
+
 <main>
+
 <section id="login" class="card">
   <h2>League Login</h2>
-  <label for="team">Team</label><select id="team"></select>
-  <label for="pin">4-digit PIN</label><input id="pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Enter PIN">
+
+  <label for="team">Team</label>
+  <select id="team"></select>
+
+  <label for="pin">4-digit PIN</label>
+  <input id="pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Enter PIN">
+
   <button id="loginBtn" onclick="login()">Open league app</button>
+
   <div id="msg" class="muted"></div>
 </section>
+
+
 <section id="app" class="hidden">
-  <div class="nav"><button onclick="showSchedule()">Schedule</button><button onclick="showStandings()">Standings</button><button onclick="showPlayoffPicture()">Playoff Picture</button><button onclick="showDocuments()">Documents</button><button id="adminTeamsBtn" class="gold hidden" onclick="showTeamManager();return false;">Edit teams</button><button id="adminCoursesBtn" class="gold hidden" onclick="showCourseManager()">Edit courses</button><button class="secondary refresh" onclick="refreshData(true)">Refresh scores</button><span class="spacer"></span><button class="secondary" onclick="logout()">Log out</button></div>
-  <div id="who" class="banner"></div><div id="view"></div>
+
+  <div class="nav">
+
+    <button onclick="showSchedule()">Schedule</button>
+
+    <button onclick="showStandings()">Standings</button>
+
+    <button onclick="showPlayoffPicture()">Playoff Picture</button>
+
+    <button onclick="showDocuments()">Documents</button>
+
+    <button
+      id="adminTeamsBtn"
+      class="gold hidden"
+      onclick="showTeamManager();return false;">
+      Edit teams
+    </button>
+
+    <button
+      id="adminCoursesBtn"
+      class="gold hidden"
+      onclick="showCourseManager()">
+      Edit courses
+    </button>
+
+    <button
+      class="secondary refresh"
+      onclick="refreshData(true)">
+      Refresh scores
+    </button>
+
+    <span class="spacer"></span>
+
+    <button
+      class="secondary"
+      onclick="logout()">
+      Log out
+    </button>
+
+  </div>
+
+  <div id="who" class="banner"></div>
+
+  <div id="view"></div>
+
 </section>
+
 </main>
+
+
 <script src="config.js"></script>
+
 <script>
+
 'use strict';
+
+
 const U=window.PKGL_CONFIG.SUPABASE_URL;
+
 const K=window.PKGL_CONFIG.SUPABASE_PUBLISHABLE_KEY;
+
+
 let token=localStorage.getItem('pkgl_token')||'';
-let user=null;try{user=JSON.parse(localStorage.getItem('pkgl_user')||'null')}catch(e){localStorage.removeItem('pkgl_user')}
-let D=null, currentView={type:'schedule'};
+
+
+let user=null;
+
+
+try{
+
+  user=JSON.parse(
+    localStorage.getItem('pkgl_user')||'null'
+  );
+
+}catch(e){
+
+  localStorage.removeItem('pkgl_user');
+
+}
+
+
+let D=null;
+
+let currentView={
+  type:'schedule'
+};
+
+
 const $=s=>document.querySelector(s);
-const H={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json'};
-const fallbackTeamNames=["Say Vadelay","Czech's Mates","Spackler","Scaggs to the Flags","Rip Tides","Rippen from the Rough","The Fossil Clan","Colombian Crushers","The Gophers","Pancake Putters","The Smails","Basilio Bombers","League Administrator"];
+
+
+const H={
+  'apikey':K,
+  'Authorization':'Bearer '+K,
+  'Content-Type':'application/json'
+};
+
+
+const fallbackTeamNames=[
+  "Say Vadelay",
+  "Czech's Mates",
+  "Spackler",
+  "Scaggs to the Flags",
+  "Rip Tides",
+  "Rippen from the Rough",
+  "The Fossil Clan",
+  "Colombian Crushers",
+  "The Gophers",
+  "Pancake Putters",
+  "The Smails",
+  "Basilio Bombers",
+  "League Administrator"
+];
+
+
 async function loadLoginTeams(){
- try{
-   const names=await rpc('pkgl_public_team_list',{});
-   $('#team').innerHTML=(names||fallbackTeamNames).map(n=>`<option>${escapeHtml(n)}</option>`).join('');
- }catch{
-   $('#team').innerHTML=fallbackTeamNames.map(n=>`<option>${escapeHtml(n)}</option>`).join('');
- }
+
+  try{
+
+    const names=
+      await rpc(
+        'pkgl_public_team_list',
+        {}
+      );
+
+    $('#team').innerHTML=
+      (names||fallbackTeamNames)
+      .map(n=>
+        `<option>${escapeHtml(n)}</option>`
+      )
+      .join('');
+
+  }catch{
+
+    $('#team').innerHTML=
+      fallbackTeamNames
+      .map(n=>
+        `<option>${escapeHtml(n)}</option>`
+      )
+      .join('');
+
+  }
+
 }
+
+
 loadLoginTeams();
-function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
+
+function escapeHtml(s){
+
+  return String(s)
+  .replace(
+    /[&<>'"]/g,
+    c=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      "'":'&#39;',
+      '"':'&quot;'
+    }[c])
+  );
+
+}
+
+
 async function rpc(name,body){
- const r=await fetch(`${U}/rest/v1/rpc/${name}`,{method:'POST',headers:H,body:JSON.stringify(body)});
- const text=await r.text(); let data=null; try{data=text?JSON.parse(text):null}catch{data=text}
- if(!r.ok) throw new Error((data&&data.message)||text||`Request failed (${r.status})`); return data;
-}
-async function login(){
- const btn=$('#loginBtn'); $('#msg').className='muted'; $('#msg').textContent='Signing in…'; btn.disabled=true;
- try{const r=await rpc('pkgl_login',{p_team:$('#team').value,p_pin:$('#pin').value});token=r.token;user=r;localStorage.setItem('pkgl_token',token);localStorage.setItem('pkgl_user',JSON.stringify(user));await enter();}
- catch(e){$('#msg').className='status error';$('#msg').textContent=e.message}
- finally{btn.disabled=false}
-}
-async function enter(){await refreshData(false);$('#login').classList.add('hidden');$('#app').classList.remove('hidden');$('#adminTeamsBtn').classList.toggle('hidden',!user.is_admin);$('#adminCoursesBtn').classList.toggle('hidden',!user.is_admin);$('#who').innerHTML=`Signed in as <b>${escapeHtml(user.team)}</b>${user.is_admin?' — Administrator':''}`;showSchedule();}
-async function logout(){try{await rpc('pkgl_logout',{p_token:token})}catch{}localStorage.removeItem('pkgl_token');localStorage.removeItem('pkgl_user');location.reload();}
-async function refreshData(showMessage){
- try{D=await rpc('pkgl_bootstrap',{p_token:token});if(showMessage){renderCurrent();alert('Scores refreshed.')}}
- catch(e){if(/expired/i.test(e.message)){localStorage.clear();location.reload()}else throw e}
-}
-const course=id=>D.courses.find(c=>c.id===id), eventBy=id=>D.events.find(e=>e.id===id), total=a=>(a||[]).reduce((n,v)=>n+(Number(v)||0),0);
-function renderCurrent(){if(currentView.type==='event')showEvent(currentView.id);else if(currentView.type==='card')openCard(currentView.id);else if(currentView.type==='standings')showStandings();else if(currentView.type==='playoffs')showPlayoffPicture();else if(currentView.type==='teams')showTeamManager();else if(currentView.type==='courses')showCourseManager(currentView.id);else showSchedule();}
-function showSchedule(){currentView={type:'schedule'};const monthlyWinners=D.events.map(e=>{const c=course(e.course_id),ms=D.matches.filter(m=>m.event_id===e.id&&m.status==='final');if(!ms.length||ms.length!==D.matches.filter(m=>m.event_id===e.id).length)return null;const scores={};ms.forEach(m=>{scores[m.home_team]=(scores[m.home_team]||0)+total(m.home_scores);scores[m.away_team]=(scores[m.away_team]||0)+total(m.away_scores)});const winner=Object.entries(scores).sort((a,b)=>a[1]-b[1])[0];return winner?{month:e.month_name,team:winner[0],score:winner[1]}:null}).filter(Boolean);const winnersHtml=monthlyWinners.length?`<div class="card"><h2>🏆 Teams of the Month</h2><div class="grid">${monthlyWinners.map(w=>`<div class="banner"><b>${escapeHtml(w.month)}</b><br>${escapeHtml(w.team)}<br><span class="muted">Score: ${w.score}</span></div>`).join('')}</div></div>`:'';$('#view').innerHTML=winnersHtml+`<div class="grid">${D.events.map(e=>{const c=course(e.course_id),ms=D.matches.filter(m=>m.event_id===e.id),done=ms.filter(m=>m.status==='final').length;return `<div class="card event" onclick="showEvent('${e.id}')"><span class="pill">Event ${e.event_order}</span><h2>${escapeHtml(e.month_name)}</h2><b>${escapeHtml(c.name)}</b><p>${done} of ${ms.length} matches final</p><div class="muted">Tap to view matches</div></div>`}).join('')}</div>`;}
-function showEvent(id){currentView={type:'event',id};const e=eventBy(id),c=course(e.course_id),ms=D.matches.filter(m=>m.event_id===id);$('#view').innerHTML=`<button class="secondary" onclick="showSchedule()">← Back</button><div class="card"><h2>${escapeHtml(e.month_name)} — ${escapeHtml(c.name)}</h2>${ms.map(m=>{const final=m.status==='final';return `<div class="match"><div class="teams">${escapeHtml(m.home_team)} <span class="muted">vs.</span> ${escapeHtml(m.away_team)}</div><div class="result">${final?`${total(m.home_scores)}–${total(m.away_scores)} <span class="muted">Final</span>`:'Not submitted'}</div><button onclick="openCard('${m.id}')">${final?'View scorecard':'Open scorecard'}</button></div>`}).join('')}</div>`;}
-function openCard(id){currentView={type:'card',id};const m=D.matches.find(x=>x.id===id),e=eventBy(m.event_id),c=course(e.course_id);const canEdit=user.is_admin||(user.team_id===m.home_team_id&&m.status!=='final');const hs=[...(m.home_scores||[])],as=[...(m.away_scores||[])];while(hs.length<c.holes.length)hs.push('');while(as.length<c.holes.length)as.push('');window.CARD=m;$('#view').innerHTML=`<button class="secondary" onclick="showEvent('${e.id}')">← Back</button><div class="card"><h2>${escapeHtml(m.home_team)} vs. ${escapeHtml(m.away_team)}</h2><div class="banner">${canEdit?(user.is_admin?'Administrator editing enabled.':'The first-listed team enters both scores.'):'Review only. Submitted scorecards are locked.'}</div><div class="score score-head"><span>Hole</span><span>Par</span><span>${escapeHtml(m.home_team)}</span><span>${escapeHtml(m.away_team)}</span></div>${(c.holes||[]).map((h,i)=>`<div class="rule"><b>Hole ${h.hole_number}: ${escapeHtml(h.rule_name)}</b><br><span class="muted">${escapeHtml(h.rule_description)}</span></div><div class="score"><b>${h.hole_number}</b><span>Par ${h.par}</span><input id="h${i}" value="${hs[i]}" ${canEdit?'':'disabled'} inputmode="numeric" oninput="cap(this,${h.par});updateTotal()"><input id="a${i}" value="${as[i]}" ${canEdit?'':'disabled'} inputmode="numeric" oninput="cap(this,${h.par});updateTotal()"></div>`).join('')}<div id="totals" class="total"></div>${canEdit?`<div class="actions"><button class="secondary" onclick="saveScore(false)">${m.status==='final'&&user.is_admin?'Reopen as draft':'Save draft'}</button><button class="gold" onclick="saveScore(true)">Submit final</button></div>`:''}</div>`;updateTotal();}
-function cap(el,par){el.value=el.value.replace(/\D/g,'');if(el.value!=='')el.value=String(Math.max(1,Math.min(par+2,Number(el.value))));}
-function values(prefix){const e=eventBy(CARD.event_id),c=course(e.course_id);return Array.from({length:c.holes.length},(_,i)=>{const v=$(`#${prefix}${i}`).value;return v===''?null:Number(v)})}
-function updateTotal(){const h=values('h'),a=values('a');$('#totals').innerHTML=`${escapeHtml(CARD.home_team)}: ${h.includes(null)?'—':total(h)}<br>${escapeHtml(CARD.away_team)}: ${a.includes(null)?'—':total(a)}`;}
-async function saveScore(finalize){try{const h=values('h'),a=values('a');if(finalize&&(h.includes(null)||a.includes(null))){alert('Enter a score for all holes.');return}await rpc('pkgl_save_score',{p_token:token,p_match:CARD.id,p_home_scores:h,p_away_scores:a,p_final:finalize});await refreshData(false);alert(finalize?'Final score submitted. Everyone can now see it.':'Draft saved.');showEvent(CARD.event_id)}catch(e){alert(e.message)}}
 
+  const r=
+    await fetch(
+      `${U}/rest/v1/rpc/${name}`,
+      {
+        method:'POST',
+        headers:H,
+        body:JSON.stringify(body)
+      }
+    );
 
-function showCourseManager(selectedId){
- if(!user.is_admin){alert('Administrator access required.');return}
- const selected=selectedId||currentView.id||(D.courses[0]&&D.courses[0].id);
- currentView={type:'courses',id:selected};
- const c=course(selected);
- $('#view').innerHTML=`<div class="card"><h2>Edit Courses and Hole Rules</h2><div class="muted">Choose a course, then edit the par, rule title, and rule description for each hole. Saved changes appear for everyone.</div><label>Course</label><select id="coursePick" onchange="showCourseManager(this.value)">${(D.courses||[]).map(x=>`<option value="${x.id}" ${x.id===selected?'selected':''}>${escapeHtml(x.name)}</option>`).join('')}</select>${(c.holes||[]).map(h=>`<div class="match"><h3>Hole ${h.hole_number}</h3><label>Par</label><input id="par-${h.hole_number}" type="number" min="2" max="7" value="${h.par}"><label>Rule title</label><input id="rule-${h.hole_number}" maxlength="80" value="${escapeHtml(h.rule_name)}"><label>Rule description</label><textarea id="desc-${h.hole_number}" rows="3" style="width:100%;font:inherit;border-radius:11px;border:1px solid #cbd5ce;padding:12px;margin:6px 0 12px">${escapeHtml(h.rule_description)}</textarea><button onclick="saveHole('${c.id}',${h.hole_number})">Save Hole ${h.hole_number}</button></div>`).join('')}</div>`;
-}
-async function saveHole(courseId,holeNumber){
- const par=Number($(`#par-${holeNumber}`).value);
- const rule=$(`#rule-${holeNumber}`).value.trim();
- const desc=$(`#desc-${holeNumber}`).value.trim();
- if(!Number.isInteger(par)||par<2||par>7){alert('Par must be a whole number from 2 through 7.');return}
- if(!rule||!desc){alert('Enter both a rule title and a description.');return}
- try{
-   await rpc('pkgl_admin_update_hole',{p_token:token,p_course_id:courseId,p_hole_number:holeNumber,p_par:par,p_rule_name:rule,p_rule_description:desc});
-   await refreshData(false);
-   alert(`Hole ${holeNumber} updated. Everyone will now see the change.`);
-   showCourseManager(courseId);
- }catch(e){alert(e.message)}
-}
+  const text=
+    await r.text();
 
-async function showDocuments(){
-  currentView={type:'documents'};
+  let data=null;
 
 
   try{
-    const res=await fetch(`/.netlify/functions/list-documents`);
-    const text=await res.text();let data={};try{data=JSON.parse(text)}catch(e){data={message:text}};
 
-    if(!res.ok) throw new Error(data.error || "Unable to load documents.");
+    data=
+      text
+      ?JSON.parse(text)
+      :null;
 
-    const docs=Array.isArray(data) ? data : (data.documents || []);
+  }catch{
 
-  $("#view").innerHTML=`
-      <div class="card">
-        <h2>Documents</h2>${user.is_admin?`<h3>Upload Document</h3><input id="docFile" type="file"><br><br><button onclick="uploadDocument()">Upload</button><hr>`:''}
-        ${docs.length
-          ? docs.map(d=>`<p><a href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}" target="_blank">${escapeHtml(d.name)}</a> ${user.is_admin?`&nbsp; <button class="danger" onclick='deleteDocument(${JSON.stringify(d.name)})'>Delete</button>`:''}</p>`).join("")
-          : `<p class="muted">No documents uploaded yet.</p>`
-        }
-      </div>`;
-  }catch(e){
-    alert(e.message);
+    data=text;
+
   }
+
+
+  if(!r.ok){
+
+    throw new Error(
+      (data&&data.message)
+      ||text
+      ||`Request failed (${r.status})`
+    );
+
+  }
+
+
+  return data;
+
 }
-async function deleteDocument(fileName){   if(!confirm(`Delete "${fileName}"?`))return;   try{     const res=await fetch("/.netlify/functions/delete-document",{       method:"POST",       headers:{"Content-Type":"application/json"},       body:JSON.stringify({token:token,fileName:fileName})     });     const data=await res.json();     if(!res.ok)throw new Error(data.error||"Delete failed.");     alert("Document deleted.");     showDocuments();   }catch(e){     alert(e.message);   } }  async function uploadDocument(){   const input=$("#docFile");   const file=input?.files?.[0];   if(!file){alert("Choose a file first.");return;}    try{     const reader=new FileReader();      reader.onload=async function(){       try{         const fileData=reader.result.split(",")[1];          const res=await fetch("/.netlify/functions/upload-document",{           method:"POST",           headers:{"Content-Type":"application/json"},           body:JSON.stringify({             token:token,             fileName:file.name,             fileType:file.type,             fileData:fileData           })         });          const data=await res.json();          if(!res.ok) throw new Error(data.error || "Upload failed.");          alert("Document uploaded.");         showDocuments();        }catch(e){         alert(e.message);       }     };      reader.readAsDataURL(file);    }catch(e){     alert(e.message);   } } function showTeamManager(){  if(!user.is_admin){alert('Administrator access required.');return}  currentView={type:'teams'};  $('#view').innerHTML=`<div class="card"><h2>Edit Teams</h2><div class="muted">Change a team name, parent/child names, or set a new 4-digit PIN.</div>${(D.teams||[]).map(t=>`<div class="match"><label>Team Name</label><input id="nick-${t.id}" value="${escapeHtml(t.nickname||'')}"><label>Parent / Child Names</label><input id="players-${t.id}" value="${escapeHtml(t.players||'')}"><label>New 4-digit PIN (leave blank to keep current PIN)</label><input id="pin-${t.id}" maxlength="4" inputmode="numeric" placeholder="Leave blank"><button onclick="saveTeam('${t.id}')">Save Team</button></div>`).join('')}</div>`; }  async function saveTeam(id){
- const nickname=$(`#nick-${id}`).value.trim();
- const players=$(`#players-${id}`).value.trim();
- const pin=$(`#pin-${id}`).value.trim();
- if(!nickname||!players){alert('Enter both the team name and the parent/child names.');return}
- if(pin&&!/^\d{4}$/.test(pin)){alert('The new PIN must contain exactly four numbers.');return}
- try{
-   await rpc('pkgl_admin_update_team',{p_token:token,p_team_id:id,p_nickname:nickname,p_players:players,p_new_pin:pin||null});
-   await refreshData(false);
-   alert('Team updated. The change is now visible to everyone.');
-   showTeamManager();
- }catch(e){alert(e.message)}
+
+
+async function login(){
+
+  const btn=
+    $('#loginBtn');
+
+  $('#msg').className=
+    'muted';
+
+  $('#msg').textContent=
+    'Signing in…';
+
+  btn.disabled=true;
+
+
+  try{
+
+    const r=
+      await rpc(
+        'pkgl_login',
+        {
+          p_team:
+            $('#team').value,
+
+          p_pin:
+            $('#pin').value
+        }
+      );
+
+
+    token=r.token;
+
+    user=r;
+
+
+    localStorage.setItem(
+      'pkgl_token',
+      token
+    );
+
+
+    localStorage.setItem(
+      'pkgl_user',
+      JSON.stringify(user)
+    );
+
+
+    await enter();
+
+
+  }catch(e){
+
+    $('#msg').className=
+      'status error';
+
+    $('#msg').textContent=
+      e.message;
+
+  }finally{
+
+    btn.disabled=false;
+
+  }
+
 }
+
+
+async function enter(){
+
+  await refreshData(false);
+
+
+  $('#login')
+  .classList
+  .add('hidden');
+
+
+  $('#app')
+  .classList
+  .remove('hidden');
+
+
+  $('#adminTeamsBtn')
+  .classList
+  .toggle(
+    'hidden',
+    !user.is_admin
+  );
+
+
+  $('#adminCoursesBtn')
+  .classList
+  .toggle(
+    'hidden',
+    !user.is_admin
+  );
+
+
+  $('#who').innerHTML=
+    `Signed in as <b>${escapeHtml(user.team)}</b>${user.is_admin?' — Administrator':''}`;
+
+
+  showSchedule();
+
+}
+
+
+async function logout(){
+
+  try{
+
+    await rpc(
+      'pkgl_logout',
+      {
+        p_token:token
+      }
+    );
+
+  }catch{}
+
+
+  localStorage.removeItem(
+    'pkgl_token'
+  );
+
+
+  localStorage.removeItem(
+    'pkgl_user'
+  );
+
+
+  location.reload();
+
+}
+
+
+async function refreshData(showMessage){
+
+  try{
+
+    D=
+      await rpc(
+        'pkgl_bootstrap',
+        {
+          p_token:token
+        }
+      );
+
+
+    if(showMessage){
+
+      renderCurrent();
+
+      alert(
+        'Scores refreshed.'
+      );
+
+    }
+
+
+  }catch(e){
+
+    if(
+      /expired/i
+      .test(e.message)
+    ){
+
+      localStorage.clear();
+
+      location.reload();
+
+    }else{
+
+      throw e;
+
+    }
+
+  }
+
+}
+
+
+const course=
+  id=>
+  D.courses.find(
+    c=>c.id===id
+  );
+
+
+const eventBy=
+  id=>
+  D.events.find(
+    e=>e.id===id
+  );
+
+
+const total=
+  a=>
+  (a||[])
+  .reduce(
+    (n,v)=>
+    n+(Number(v)||0),
+    0
+  );
+
+
+function renderCurrent(){
+
+  if(
+    currentView.type===
+    'event'
+  ){
+
+    showEvent(
+      currentView.id
+    );
+
+  }
+
+  else if(
+    currentView.type===
+    'card'
+  ){
+
+    openCard(
+      currentView.id
+    );
+
+  }
+
+  else if(
+    currentView.type===
+    'standings'
+  ){
+
+    showStandings();
+
+  }
+
+  else if(
+    currentView.type===
+    'playoffs'
+  ){
+
+    showPlayoffPicture();
+
+  }
+
+  else if(
+    currentView.type===
+    'teams'
+  ){
+
+    showTeamManager();
+
+  }
+
+  else if(
+    currentView.type===
+    'courses'
+  ){
+
+    showCourseManager(
+      currentView.id
+    );
+
+  }
+
+  else if(
+    currentView.type===
+    'documents'
+  ){
+
+    showDocuments();
+
+  }
+
+  else{
+
+    showSchedule();
+
+  }
+
+}
+
+
+function showSchedule(){
+
+  currentView={
+    type:'schedule'
+  };
+
+
+  const monthlyWinners=
+    D.events
+    .map(e=>{
+
+      const ms=
+        D.matches
+        .filter(m=>
+          m.event_id===e.id
+          &&
+          m.status==='final'
+        );
+
+
+      const all=
+        D.matches
+        .filter(m=>
+          m.event_id===e.id
+        );
+
+
+      if(
+        !ms.length
+        ||
+        ms.length!==all.length
+      ){
+
+        return null;
+
+      }
+
+
+      const scores={};
+
+
+      ms.forEach(m=>{
+
+        scores[m.home_team]=
+          (scores[m.home_team]||0)
+          +
+          total(
+            m.home_scores
+          );
+
+
+        scores[m.away_team]=
+          (scores[m.away_team]||0)
+          +
+          total(
+            m.away_scores
+          );
+
+      });
+
+
+      const winner=
+        Object.entries(scores)
+        .sort(
+          (a,b)=>
+          a[1]-b[1]
+        )[0];
+
+
+      return winner
+      ?{
+        month:e.month_name,
+        team:winner[0],
+        score:winner[1]
+      }
+      :null;
+
+    })
+    .filter(Boolean);
+
+
+  const winnersHtml=
+    monthlyWinners.length
+
+    ?`
+      <div class="card">
+
+        <h2>
+          🏆 Teams of the Month
+        </h2>
+
+        <div class="grid">
+
+          ${
+            monthlyWinners
+            .map(w=>
+              `
+              <div class="banner">
+
+                <b>
+                  ${escapeHtml(w.month)}
+                </b>
+
+                <br>
+
+                ${escapeHtml(w.team)}
+
+                <br>
+
+                <span class="muted">
+                  Score: ${w.score}
+                </span>
+
+              </div>
+              `
+            )
+            .join('')
+          }
+
+        </div>
+
+      </div>
+    `
+
+    :'';
+
+
+  const eventsHtml=
+    `
+    <div class="grid">
+
+      ${
+        D.events
+        .map(e=>{
+
+          const c=
+            course(
+              e.course_id
+            );
+
+
+          const ms=
+            D.matches
+            .filter(m=>
+              m.event_id===e.id
+            );
+
+
+          const done=
+            ms
+            .filter(m=>
+              m.status==='final'
+            )
+            .length;
+
+
+          return `
+            <div
+              class="card event"
+              onclick="showEvent('${e.id}')">
+
+              <span class="pill">
+                Event ${e.event_order}
+              </span>
+
+              <h2>
+                ${escapeHtml(e.month_name)}
+              </h2>
+
+              <b>
+                ${escapeHtml(c.name)}
+              </b>
+
+              <p>
+                ${done} of ${ms.length}
+                matches final
+              </p>
+
+              <div class="muted">
+                Tap to view matches
+              </div>
+
+            </div>
+          `;
+
+        })
+        .join('')
+      }
+
+    </div>
+    `;
+
+
+  $('#view').innerHTML=
+    winnersHtml+
+    eventsHtml;
+
+}
+
+
+function showEvent(id){
+
+  currentView={
+    type:'event',
+    id
+  };
+
+
+  const e=
+    eventBy(id);
+
+
+  const c=
+    course(
+      e.course_id
+    );
+
+
+  const ms=
+    D.matches
+    .filter(m=>
+      m.event_id===id
+    );
+
+
+  $('#view').innerHTML=
+    `
+    <button
+      class="secondary"
+      onclick="showSchedule()">
+
+      ← Back
+
+    </button>
+
+    <div class="card">
+
+      <h2>
+        ${escapeHtml(e.month_name)}
+        —
+        ${escapeHtml(c.name)}
+      </h2>
+
+      ${
+        ms
+        .map(m=>{
+
+          const final=
+            m.status==='final';
+
+
+          return `
+            <div class="match">
+
+              <div class="teams">
+
+                ${escapeHtml(m.home_team)}
+
+                <span class="muted">
+                  vs.
+                </span>
+
+                ${escapeHtml(m.away_team)}
+
+              </div>
+
+              <div class="result">
+
+                ${
+                  final
+
+                  ?`
+                    ${total(m.home_scores)}
+                    –
+                    ${total(m.away_scores)}
+
+                    <span class="muted">
+                      Final
+                    </span>
+                  `
+
+                  :'Not submitted'
+                }
+
+              </div>
+
+              <button
+                onclick="openCard('${m.id}')">
+
+                ${
+                  final
+                  ?'View scorecard'
+                  :'Open scorecard'
+                }
+
+              </button>
+
+            </div>
+          `;
+
+        })
+        .join('')
+      }
+
+    </div>
+    `;
+
+}
+
+
+function openCard(id){
+
+  currentView={
+    type:'card',
+    id
+  };
+
+
+  const m=
+    D.matches.find(
+      x=>x.id===id
+    );
+
+
+  const e=
+    eventBy(
+      m.event_id
+    );
+
+
+  const c=
+    course(
+      e.course_id
+    );
+
+
+  const canEdit=
+    user.is_admin
+    ||
+    (
+      user.team_id===
+      m.home_team_id
+      &&
+      m.status!=='final'
+    );
+
+
+  const hs=[
+    ...(m.home_scores||[])
+  ];
+
+
+  const as=[
+    ...(m.away_scores||[])
+  ];
+
+
+  while(
+    hs.length<
+    c.holes.length
+  ){
+
+    hs.push('');
+
+  }
+
+
+  while(
+    as.length<
+    c.holes.length
+  ){
+
+    as.push('');
+
+  }
+
+
+  window.CARD=m;
+
+
+  $('#view').innerHTML=
+    `
+    <button
+      class="secondary"
+      onclick="showEvent('${e.id}')">
+
+      ← Back
+
+    </button>
+
+    <div class="card">
+
+      <h2>
+
+        ${escapeHtml(m.home_team)}
+        vs.
+        ${escapeHtml(m.away_team)}
+
+      </h2>
+
+      <div class="banner">
+
+        ${
+          canEdit
+
+          ?(
+            user.is_admin
+            ?'Administrator editing enabled.'
+            :'The first-listed team enters both scores.'
+          )
+
+          :'Review only. Submitted scorecards are locked.'
+        }
+
+      </div>
+
+      <div class="score score-head">
+
+        <span>
+          Hole
+        </span>
+
+        <span>
+          Par
+        </span>
+
+        <span>
+          ${escapeHtml(m.home_team)}
+        </span>
+
+        <span>
+          ${escapeHtml(m.away_team)}
+        </span>
+
+      </div>
+
+      ${
+        (c.holes||[])
+        .map(
+          (h,i)=>
+          `
+          <div class="rule">
+
+            <b>
+              Hole ${h.hole_number}:
+              ${escapeHtml(h.rule_name)}
+            </b>
+
+            <br>
+
+            <span class="muted">
+              ${escapeHtml(h.rule_description)}
+            </span>
+
+          </div>
+
+          <div class="score">
+
+            <b>
+              ${h.hole_number}
+            </b>
+
+            <span>
+              Par ${h.par}
+            </span>
+
+            <input
+              id="h${i}"
+              value="${hs[i]}"
+              ${canEdit?'':'disabled'}
+              inputmode="numeric"
+              oninput="cap(this,${h.par});updateTotal()">
+
+            <input
+              id="a${i}"
+              value="${as[i]}"
+              ${canEdit?'':'disabled'}
+              inputmode="numeric"
+              oninput="cap(this,${h.par});updateTotal()">
+
+          </div>
+          `
+        )
+        .join('')
+      }
+
+      <div
+        id="totals"
+        class="total">
+      </div>
+
+      ${
+        canEdit
+
+        ?`
+          <div class="actions">
+
+            <button
+              class="secondary"
+              onclick="saveScore(false)">
+
+              ${
+                m.status==='final'
+                &&
+                user.is_admin
+
+                ?'Reopen as draft'
+                :'Save draft'
+              }
+
+            </button>
+
+            <button
+              class="gold"
+              onclick="saveScore(true)">
+
+              Submit final
+
+            </button>
+
+          </div>
+        `
+
+        :''
+      }
+
+    </div>
+    `;
+
+
+  updateTotal();
+
+}
+
+
+function cap(el,par){
+
+  el.value=
+    el.value.replace(
+      /\D/g,
+      ''
+    );
+
+
+  if(
+    el.value!==''
+  ){
+
+    el.value=
+      String(
+        Math.max(
+          1,
+          Math.min(
+            par+2,
+            Number(el.value)
+          )
+        )
+      );
+
+  }
+
+}
+
+
+function values(prefix){
+
+  const e=
+    eventBy(
+      CARD.event_id
+    );
+
+
+  const c=
+    course(
+      e.course_id
+    );
+
+
+  return Array.from(
+    {
+      length:
+        c.holes.length
+    },
+    (_,i)=>{
+
+      const v=
+        $(
+          `#${prefix}${i}`
+        )
+        .value;
+
+
+      return v===''
+      ?null
+      :Number(v);
+
+    }
+  );
+
+}
+
+
+function updateTotal(){
+
+  const h=
+    values('h');
+
+
+  const a=
+    values('a');
+
+
+  $('#totals').innerHTML=
+    `
+    ${escapeHtml(CARD.home_team)}:
+    ${
+      h.includes(null)
+      ?'—'
+      :total(h)
+    }
+
+    <br>
+
+    ${escapeHtml(CARD.away_team)}:
+    ${
+      a.includes(null)
+      ?'—'
+      :total(a)
+    }
+    `;
+
+}
+
+
+async function saveScore(finalize){
+
+  try{
+
+    const h=
+      values('h');
+
+
+    const a=
+      values('a');
+
+
+    if(
+      finalize
+      &&
+      (
+        h.includes(null)
+        ||
+        a.includes(null)
+      )
+    ){
+
+      alert(
+        'Enter a score for all holes.'
+      );
+
+      return;
+
+    }
+
+
+    await rpc(
+      'pkgl_save_score',
+      {
+        p_token:token,
+        p_match:CARD.id,
+        p_home_scores:h,
+        p_away_scores:a,
+        p_final:finalize
+      }
+    );
+
+
+    await refreshData(false);
+
+
+    alert(
+      finalize
+      ?'Final score submitted. Everyone can now see it.'
+      :'Draft saved.'
+    );
+
+
+    showEvent(
+      CARD.event_id
+    );
+
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+function showCourseManager(selectedId){
+
+  if(
+    !user.is_admin
+  ){
+
+    alert(
+      'Administrator access required.'
+    );
+
+    return;
+
+  }
+
+
+  const selected=
+    selectedId
+    ||
+    currentView.id
+    ||
+    (
+      D.courses[0]
+      &&
+      D.courses[0].id
+    );
+
+
+  currentView={
+    type:'courses',
+    id:selected
+  };
+
+
+  const c=
+    course(selected);
+
+
+  $('#view').innerHTML=
+    `
+    <div class="card">
+
+      <h2>
+        Edit Courses and Hole Rules
+      </h2>
+
+      <div class="muted">
+        Choose a course, then edit the par,
+        rule title, and rule description for each hole.
+        Saved changes appear for everyone.
+      </div>
+
+      <label>
+        Course
+      </label>
+
+      <select
+        id="coursePick"
+        onchange="showCourseManager(this.value)">
+
+        ${
+          (D.courses||[])
+          .map(x=>
+            `
+            <option
+              value="${x.id}"
+              ${
+                x.id===selected
+                ?'selected'
+                :''
+              }>
+
+              ${escapeHtml(x.name)}
+
+            </option>
+            `
+          )
+          .join('')
+        }
+
+      </select>
+
+      ${
+        (c.holes||[])
+        .map(h=>
+          `
+          <div class="match">
+
+            <h3>
+              Hole ${h.hole_number}
+            </h3>
+
+            <label>
+              Par
+            </label>
+
+            <input
+              id="par-${h.hole_number}"
+              type="number"
+              min="2"
+              max="7"
+              value="${h.par}">
+
+            <label>
+              Rule title
+            </label>
+
+            <input
+              id="rule-${h.hole_number}"
+              maxlength="80"
+              value="${escapeHtml(h.rule_name)}">
+
+            <label>
+              Rule description
+            </label>
+
+            <textarea
+              id="desc-${h.hole_number}"
+              rows="3"
+              style="
+                width:100%;
+                font:inherit;
+                border-radius:11px;
+                border:1px solid #cbd5ce;
+                padding:12px;
+                margin:6px 0 12px
+              ">${escapeHtml(h.rule_description)}</textarea>
+
+            <button
+              onclick="saveHole('${c.id}',${h.hole_number})">
+
+              Save Hole ${h.hole_number}
+
+            </button>
+
+          </div>
+          `
+        )
+        .join('')
+      }
+
+    </div>
+    `;
+
+}
+
+
+async function saveHole(
+  courseId,
+  holeNumber
+){
+
+  const par=
+    Number(
+      $(
+        `#par-${holeNumber}`
+      )
+      .value
+    );
+
+
+  const rule=
+    $(
+      `#rule-${holeNumber}`
+    )
+    .value
+    .trim();
+
+
+  const desc=
+    $(
+      `#desc-${holeNumber}`
+    )
+    .value
+    .trim();
+
+
+  if(
+    !Number.isInteger(par)
+    ||
+    par<2
+    ||
+    par>7
+  ){
+
+    alert(
+      'Par must be a whole number from 2 through 7.'
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !rule
+    ||
+    !desc
+  ){
+
+    alert(
+      'Enter both a rule title and a description.'
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await rpc(
+      'pkgl_admin_update_hole',
+      {
+        p_token:token,
+        p_course_id:courseId,
+        p_hole_number:holeNumber,
+        p_par:par,
+        p_rule_name:rule,
+        p_rule_description:desc
+      }
+    );
+
+
+    await refreshData(false);
+
+
+    alert(
+      `Hole ${holeNumber} updated. Everyone will now see the change.`
+    );
+
+
+    showCourseManager(
+      courseId
+    );
+
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+async function showDocuments(){
+
+  currentView={
+    type:'documents'
+  };
+
+
+  try{
+
+    const res=
+      await fetch(
+        `/.netlify/functions/list-documents`
+      );
+
+
+    const text=
+      await res.text();
+
+
+    let data={};
+
+
+    try{
+
+      data=
+        JSON.parse(text);
+
+    }catch(e){
+
+      data={
+        message:text
+      };
+
+    }
+
+
+    if(
+      !res.ok
+    ){
+
+      throw new Error(
+        data.error
+        ||
+        'Unable to load documents.'
+      );
+
+    }
+
+
+    const docs=
+      Array.isArray(data)
+      ?data
+      :(data.documents||[]);
+
+
+    $('#view').innerHTML=
+      `
+      <div class="card">
+
+        <h2>
+          Documents
+        </h2>
+
+        ${
+          user.is_admin
+
+          ?`
+            <h3>
+              Upload Document
+            </h3>
+
+            <input
+              id="docFile"
+              type="file">
+
+            <br><br>
+
+            <button
+              onclick="uploadDocument()">
+
+              Upload
+
+            </button>
+
+            <hr>
+          `
+
+          :''
+        }
+
+        ${
+          docs.length
+
+          ?docs
+          .map(d=>
+            `
+            <p>
+
+              <a
+                href="${U}/storage/v1/object/public/PKGL%20Documents/${encodeURIComponent(d.name)}"
+                target="_blank">
+
+                ${escapeHtml(d.name)}
+
+              </a>
+
+              ${
+                user.is_admin
+
+                ?`
+                  &nbsp;
+
+                  <button
+                    class="danger"
+                    onclick='deleteDocument(${JSON.stringify(d.name)})'>
+
+                    Delete
+
+                  </button>
+                `
+
+                :''
+              }
+
+            </p>
+            `
+          )
+          .join('')
+
+          :`
+            <p class="muted">
+              No documents uploaded yet.
+            </p>
+          `
+        }
+
+      </div>
+      `;
+
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+async function deleteDocument(fileName){
+
+  if(
+    !confirm(
+      `Delete "${fileName}"?`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const res=
+      await fetch(
+        '/.netlify/functions/delete-document',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':
+              'application/json'
+          },
+          body:
+            JSON.stringify({
+              token:token,
+              fileName:fileName
+            })
+        }
+      );
+
+
+    const data=
+      await res.json();
+
+
+    if(
+      !res.ok
+    ){
+
+      throw new Error(
+        data.error
+        ||
+        'Delete failed.'
+      );
+
+    }
+
+
+    alert(
+      'Document deleted.'
+    );
+
+
+    showDocuments();
+
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+async function uploadDocument(){
+
+  const input=
+    $('#docFile');
+
+
+  const file=
+    input?.files?.[0];
+
+
+  if(
+    !file
+  ){
+
+    alert(
+      'Choose a file first.'
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    const reader=
+      new FileReader();
+
+
+    reader.onload=
+      async function(){
+
+        try{
+
+          const fileData=
+            reader.result
+            .split(',')[1];
+
+
+          const res=
+            await fetch(
+              '/.netlify/functions/upload-document',
+              {
+                method:'POST',
+                headers:{
+                  'Content-Type':
+                    'application/json'
+                },
+                body:
+                  JSON.stringify({
+                    token:token,
+                    fileName:file.name,
+                    fileType:file.type,
+                    fileData:fileData
+                  })
+              }
+            );
+
+
+          const data=
+            await res.json();
+
+
+          if(
+            !res.ok
+          ){
+
+            throw new Error(
+              data.error
+              ||
+              'Upload failed.'
+            );
+
+          }
+
+
+          alert(
+            'Document uploaded.'
+          );
+
+
+          showDocuments();
+
+
+        }catch(e){
+
+          alert(
+            e.message
+          );
+
+        }
+
+      };
+
+
+    reader.readAsDataURL(
+      file
+    );
+
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+function showTeamManager(){
+
+  if(
+    !user.is_admin
+  ){
+
+    alert(
+      'Administrator access required.'
+    );
+
+    return;
+
+  }
+
+
+  currentView={
+    type:'teams'
+  };
+
+
+  $('#view').innerHTML=
+    `
+    <div class="card">
+
+      <h2>
+        Edit Teams
+      </h2>
+
+      <div class="muted">
+        Change a team name,
+        parent/child names,
+        or set a new 4-digit PIN.
+      </div>
+
+      ${
+        (D.teams||[])
+        .map(t=>
+          `
+          <div class="match">
+
+            <label>
+              Team Name
+            </label>
+
+            <input
+              id="nick-${t.id}"
+              value="${escapeHtml(t.nickname||'')}">
+
+            <label>
+              Parent / Child Names
+            </label>
+
+            <input
+              id="players-${t.id}"
+              value="${escapeHtml(t.players||'')}">
+
+            <label>
+              New 4-digit PIN
+              (leave blank to keep current PIN)
+            </label>
+
+            <input
+              id="pin-${t.id}"
+              maxlength="4"
+              inputmode="numeric"
+              placeholder="Leave blank">
+
+            <button
+              onclick="saveTeam('${t.id}')">
+
+              Save Team
+
+            </button>
+
+          </div>
+          `
+        )
+        .join('')
+      }
+
+    </div>
+    `;
+
+}
+
+
+async function saveTeam(id){
+
+  const nickname=
+    $(
+      `#nick-${id}`
+    )
+    .value
+    .trim();
+
+
+  const players=
+    $(
+      `#players-${id}`
+    )
+    .value
+    .trim();
+
+
+  const pin=
+    $(
+      `#pin-${id}`
+    )
+    .value
+    .trim();
+
+
+  if(
+    !nickname
+    ||
+    !players
+  ){
+
+    alert(
+      'Enter both the team name and the parent/child names.'
+    );
+
+    return;
+
+  }
+
+
+  if(
+    pin
+    &&
+    !/^\d{4}$/.test(pin)
+  ){
+
+    alert(
+      'The new PIN must contain exactly four numbers.'
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await rpc(
+      'pkgl_admin_update_team',
+      {
+        p_token:token,
+        p_team_id:id,
+        p_nickname:nickname,
+        p_players:players,
+        p_new_pin:pin||null
+      }
+    );
+
+
+    await refreshData(false);
+
+
+    alert(
+      'Team updated. The change is now visible to everyone.'
+    );
+
+
+    showTeamManager();
+
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+function buildStandings(){
+
+  const s={};
+
+
+  D.teams.forEach(t=>{
+
+    s[t.id]={
+      id:t.id,
+      name:t.nickname,
+      gp:0,
+      w:0,
+      l:0,
+      t:0,
+      pts:0,
+      strokes:0,
+      cumulative:0,
+      birdies:0,
+      pars:0,
+      bogeys:0,
+      doubles:0
+    };
+
+  });
+
+
+  D.matches
+  .filter(m=>
+    m.status==='final'
+  )
+  .forEach(m=>{
+
+    const h=
+      s[m.home_team_id];
+
+
+    const a=
+      s[m.away_team_id];
+
+
+    if(
+      !h
+      ||
+      !a
+    ){
+
+      return;
+
+    }
+
+
+    const x=
+      total(
+        m.home_scores
+      );
+
+
+    const y=
+      total(
+        m.away_scores
+      );
+
+
+    h.gp++;
+
+    a.gp++;
+
+
+    h.strokes+=x;
+
+    a.strokes+=y;
+
+
+    if(
+      x<y
+    ){
+
+      h.w++;
+
+      a.l++;
+
+      h.pts+=3;
+
+    }
+
+    else if(
+      y<x
+    ){
+
+      a.w++;
+
+      h.l++;
+
+      a.pts+=3;
+
+    }
+
+    else{
+
+      h.t++;
+
+      a.t++;
+
+      h.pts++;
+
+      a.pts++;
+
+    }
+
+
+    const e=
+      eventBy(
+        m.event_id
+      );
+
+
+    const c=
+      course(
+        e.course_id
+      );
+
+
+    const parTotal=
+      (c.holes||[])
+      .reduce(
+        (n,hole)=>
+        n+
+        Number(
+          hole.par||0
+        ),
+        0
+      );
+
+
+    h.cumulative+=
+      x-parTotal;
+
+
+    a.cumulative+=
+      y-parTotal;
+
+
+    (c.holes||[])
+    .forEach(
+      (hole,i)=>{
+
+        const hs=
+          Number(
+            (m.home_scores||[])[i]
+          );
+
+
+        const as=
+          Number(
+            (m.away_scores||[])[i]
+          );
+
+
+        const add=
+          (row,score)=>{
+
+            if(
+              !Number.isFinite(score)
+              ||
+              score<1
+            ){
+
+              return;
+
+            }
+
+
+            const d=
+              score-hole.par;
+
+
+            if(
+              d===-1
+            ){
+
+              row.birdies++;
+
+            }
+
+            else if(
+              d===0
+            ){
+
+              row.pars++;
+
+            }
+
+            else if(
+              d===1
+            ){
+
+              row.bogeys++;
+
+            }
+
+            else if(
+              d===2
+            ){
+
+              row.doubles++;
+
+            }
+
+          };
+
+
+        add(
+          h,
+          hs
+        );
+
+
+        add(
+          a,
+          as
+        );
+
+      }
+    );
+
+  });
+
+
+  return Object.values(s)
+  .sort(
+    (a,b)=>
+      b.pts-a.pts
+      ||
+      b.w-a.w
+      ||
+      a.strokes-b.strokes
+      ||
+      a.name.localeCompare(
+        b.name
+      )
+  );
+
+}
+
 
 function showStandings(){
- currentView={type:'standings'};
- const s={};
- D.teams.forEach(t=>s[t.id]={name:t.nickname,gp:0,w:0,l:0,t:0,pts:0,strokes:0,cumulative:0,birdies:0,pars:0,bogeys:0,doubles:0});
- D.matches.filter(m=>m.status==='final').forEach(m=>{
-   const h=s[m.home_team_id],a=s[m.away_team_id],x=total(m.home_scores),y=total(m.away_scores);
-   h.gp++;a.gp++;h.strokes+=x;a.strokes+=y;
-   if(x<y){h.w++;a.l++;h.pts+=3}else if(y<x){a.w++;h.l++;a.pts+=3}else{h.t++;a.t++;h.pts++;a.pts++}
-   const e=eventBy(m.event_id),c=course(e.course_id);const parTotal=(c.holes||[]).reduce((n,hole)=>n+Number(hole.par||0),0);h.cumulative+=x-parTotal;a.cumulative+=y-parTotal;
-   c.holes.forEach((hole,i)=>{
-     const hs=Number((m.home_scores||[])[i]),as=Number((m.away_scores||[])[i]);
-     const add=(row,score)=>{
-       if(!Number.isFinite(score)||score<1)return;
-       const d=score-hole.par;
-       if(d===-1)row.birdies++;
-       else if(d===0)row.pars++;
-       else if(d===1)row.bogeys++;
-       else if(d===2)row.doubles++;
-     };
-     add(h,hs);add(a,as);
-   });
- });
- const rows=Object.values(s).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.strokes-b.strokes||a.name.localeCompare(b.name));
- $('#view').innerHTML=`<div class="card"><h2>League Standings</h2><div class="muted">Win = 3 points · Tie = 1 point · Loss = 0 points. Hole totals are counted automatically from final scorecards.</div><div style="overflow:auto"><table><thead><tr><th>#</th><th>Team</th><th>GP</th><th>W</th><th>L</th><th>T</th><th>Pts</th><th>Cumulative</th><th>Birdies</th><th>Pars</th><th>Bogeys</th><th>Doubles</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.gp}</td><td>${r.w}</td><td>${r.l}</td><td>${r.t}</td><td><b>${r.pts}</b></td><td><b>${r.cumulative>0?'+'+r.cumulative:r.cumulative}</b></td><td>${r.birdies}</td><td>${r.pars}</td><td>${r.bogeys}</td><td>${r.doubles}</td></tr>`).join('')}</tbody></table></div></div>`;
+
+  currentView={
+    type:'standings'
+  };
+
+
+  const rows=
+    buildStandings();
+
+
+  $('#view').innerHTML=
+    `
+    <div class="card">
+
+      <h2>
+        League Standings
+      </h2>
+
+      <div class="muted">
+        Win = 3 points ·
+        Tie = 1 point ·
+        Loss = 0 points.
+        Hole totals are counted automatically
+        from final scorecards.
+      </div>
+
+      <div style="overflow:auto">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>#</th>
+              <th>Team</th>
+              <th>GP</th>
+              <th>W</th>
+              <th>L</th>
+              <th>T</th>
+              <th>Pts</th>
+              <th>Cumulative</th>
+              <th>Birdies</th>
+              <th>Pars</th>
+              <th>Bogeys</th>
+              <th>Doubles</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              rows
+              .map(
+                (r,i)=>
+                `
+                <tr>
+
+                  <td>
+                    ${i+1}
+                  </td>
+
+                  <td>
+                    ${escapeHtml(r.name)}
+                  </td>
+
+                  <td>
+                    ${r.gp}
+                  </td>
+
+                  <td>
+                    ${r.w}
+                  </td>
+
+                  <td>
+                    ${r.l}
+                  </td>
+
+                  <td>
+                    ${r.t}
+                  </td>
+
+                  <td>
+                    <b>
+                      ${r.pts}
+                    </b>
+                  </td>
+
+                  <td>
+                    <b>
+                      ${
+                        r.cumulative>0
+                        ?'+'+r.cumulative
+                        :r.cumulative
+                      }
+                    </b>
+                  </td>
+
+                  <td>
+                    ${r.birdies}
+                  </td>
+
+                  <td>
+                    ${r.pars}
+                  </td>
+
+                  <td>
+                    ${r.bogeys}
+                  </td>
+
+                  <td>
+                    ${r.doubles}
+                  </td>
+
+                </tr>
+                `
+              )
+              .join('')
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+    `;
+
 }
+
+
+function teamProjection(teamId){
+
+  const games=
+    D.matches
+
+    .filter(m=>
+      m.status==='final'
+      &&
+      (
+        m.home_team_id===teamId
+        ||
+        m.away_team_id===teamId
+      )
+    )
+
+    .map(m=>{
+
+      const e=
+        eventBy(
+          m.event_id
+        );
+
+
+      const c=
+        course(
+          e.course_id
+        );
+
+
+      const holes=
+        (c&&c.holes)
+        ||[];
+
+
+      const par=
+        holes
+        .reduce(
+          (n,h)=>
+          n+
+          Number(
+            h.par||0
+          ),
+          0
+        );
+
+
+      const score=
+        m.home_team_id===teamId
+
+        ?total(
+          m.home_scores
+        )
+
+        :total(
+          m.away_scores
+        );
+
+
+      return{
+
+        order:
+          Number(
+            e.event_order
+          )
+          ||0,
+
+        diffPerHole:
+          holes.length
+
+          ?(
+            score-par
+          )
+          /
+          holes.length
+
+          :0
+
+      };
+
+    })
+
+    .sort(
+      (a,b)=>
+      a.order-b.order
+    );
+
+
+  if(
+    !games.length
+  ){
+
+    return{
+      games:0,
+      projected:null
+    };
+
+  }
+
+
+  const average=
+    games.reduce(
+      (n,g)=>
+      n+
+      g.diffPerHole,
+      0
+    )
+    /
+    games.length;
+
+
+  const recentGames=
+    games.slice(-3);
+
+
+  const recent=
+    recentGames.reduce(
+      (n,g)=>
+      n+
+      g.diffPerHole,
+      0
+    )
+    /
+    recentGames.length;
+
+
+  const rating=
+    (average*.65)
+    +
+    (recent*.35);
+
+
+  return{
+
+    games:
+      games.length,
+
+    projected:
+      34+
+      (rating*9)
+
+  };
+
 }
-/*
-function playoffStandings(){
-   ...
+
+
+function predictMatch(a,b){
+
+  const pa=
+    teamProjection(
+      a.id
+    );
+
+
+  const pb=
+    teamProjection(
+      b.id
+    );
+
+
+  if(
+    pa.projected===null
+    ||
+    pb.projected===null
+  ){
+
+    return{
+      scoreA:'—',
+      scoreB:'—',
+      winA:50,
+      winB:50
+    };
+
+  }
+
+
+  const recordA=
+    a.gp
+    ?a.pts/(a.gp*3)
+    :.5;
+
+
+  const recordB=
+    b.gp
+    ?b.pts/(b.gp*3)
+    :.5;
+
+
+  const strengthA=
+    pa.projected
+    -
+    (
+      (recordA-.5)
+      *
+      1.5
+    );
+
+
+  const strengthB=
+    pb.projected
+    -
+    (
+      (recordB-.5)
+      *
+      1.5
+    );
+
+
+  let winA=
+    100
+    /
+    (
+      1+
+      Math.exp(
+        (
+          strengthA
+          -
+          strengthB
+        )
+        /
+        1.8
+      )
+    );
+
+
+  winA=
+    Math.max(
+      15,
+      Math.min(
+        85,
+        winA
+      )
+    );
+
+
+  return{
+
+    scoreA:
+      Math.round(
+        pa.projected
+      ),
+
+    scoreB:
+      Math.round(
+        pb.projected
+      ),
+
+    winA:
+      Math.round(
+        winA
+      ),
+
+    winB:
+      100-
+      Math.round(
+        winA
+      )
+
+  };
+
 }
+
+
+function playoffMatch(a,b){
+
+  if(
+    !a
+    ||
+    !b
+  ){
+
+    return '';
+
+  }
+
+
+  const p=
+    predictMatch(
+      a,
+      b
+    );
+
+
+  const favorite=
+    p.winA>p.winB
+
+    ?a.name
+
+    :p.winB>p.winA
+
+    ?b.name
+
+    :'Even';
+
+
+  return `
+    <div class="playoff-card">
+
+      <div class="playoff-row">
+
+        <div>
+
+          <b>
+            #${a.seed}
+            ${escapeHtml(a.name)}
+          </b>
+
+          <div class="muted">
+            ${a.w}-${a.l}-${a.t}
+            ·
+            ${a.pts} pts
+          </div>
+
+        </div>
+
+        <div class="playoff-pct">
+          ${p.winA}%
+        </div>
+
+      </div>
+
+
+      <div class="playoff-vs">
+        VS
+      </div>
+
+
+      <div class="playoff-row">
+
+        <div>
+
+          <b>
+            #${b.seed}
+            ${escapeHtml(b.name)}
+          </b>
+
+          <div class="muted">
+            ${b.w}-${b.l}-${b.t}
+            ·
+            ${b.pts} pts
+          </div>
+
+        </div>
+
+        <div class="playoff-pct">
+          ${p.winB}%
+        </div>
+
+      </div>
+
+
+      <div
+        class="banner"
+        style="margin-top:14px">
+
+        <b>
+          Projected Score:
+        </b>
+
+        ${p.scoreA}
+        –
+        ${p.scoreB}
+
+        <br>
+
+        <span class="muted">
+          Favorite:
+          ${escapeHtml(favorite)}
+        </span>
+
+      </div>
+
+    </div>
+  `;
+
+}
+
 
 function showPlayoffPicture(){
-   ...
+
+  currentView={
+    type:'playoffs'
+  };
+
+
+  const rows=
+    buildStandings()
+    .map(
+      (r,i)=>({
+        ...r,
+        seed:i+1
+      })
+    );
+
+
+  const championship=[
+
+    [
+      rows[0],
+      rows[7]
+    ],
+
+    [
+      rows[3],
+      rows[4]
+    ],
+
+    [
+      rows[1],
+      rows[6]
+    ],
+
+    [
+      rows[2],
+      rows[5]
+    ]
+
+  ];
+
+
+  const consolation=[
+
+    [
+      rows[8],
+      rows[11]
+    ],
+
+    [
+      rows[9],
+      rows[10]
+    ]
+
+  ];
+
+
+  $('#view').innerHTML=
+    `
+
+    <div class="card">
+
+      <h2>
+        🏆 Current Playoff Picture
+      </h2>
+
+      <div class="muted">
+        If the season ended today.
+        Seeds update automatically
+        from the current standings.
+      </div>
+
+
+      <h3 style="margin-top:24px">
+        Championship Bracket — Top 8
+      </h3>
+
+
+      ${
+        championship
+        .map(x=>
+          playoffMatch(
+            x[0],
+            x[1]
+          )
+        )
+        .join('')
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>
+        Consolation Bracket
+      </h2>
+
+      <div class="muted">
+        Seeds 9–12
+      </div>
+
+      ${
+        consolation
+        .map(x=>
+          playoffMatch(
+            x[0],
+            x[1]
+          )
+        )
+        .join('')
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>
+        PKGL Match Predictor
+      </h3>
+
+      <div class="muted">
+
+        Win percentages are estimates,
+        not betting odds.
+
+        The model uses season scoring
+        performance, recent form,
+        and match record.
+
+        Projected scores are shown on a
+        9-hole Par-34 equivalent so
+        results from different PKGL
+        courses can be compared.
+
+      </div>
+
+    </div>
+
+    `;
+
 }
-*/
-if('serviceWorker' in navigator)
-  if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-if(token&&user)enter().catch(()=>{localStorage.clear();location.reload()});
+
+
+if(
+  'serviceWorker'
+  in navigator
+){
+
+  window.addEventListener(
+    'load',
+    ()=>
+      navigator
+      .serviceWorker
+      .register('sw.js')
+      .catch(()=>{})
+  );
+
+}
+
+
+if(
+  token
+  &&
+  user
+){
+
+  enter()
+  .catch(()=>{
+
+    localStorage.clear();
+
+    location.reload();
+
+  });
+
+}
+
 </script>
+
 </body>
 </html>
-
-
-
