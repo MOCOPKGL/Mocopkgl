@@ -2376,6 +2376,27 @@ function showEvent(id){
 
           const final=m.status==='final';
 
+          const homeTotal=
+            final
+            ?total(m.home_scores)
+            :null;
+
+          const awayTotal=
+            final
+            ?total(m.away_scores)
+            :null;
+
+          const winnerLabel=
+            final
+            ?(
+              homeTotal<awayTotal
+              ?m.home_team+' won'
+              :awayTotal<homeTotal
+              ?m.away_team+' won'
+              :'Tie'
+            )
+            :'';
+
           const isFeatured=
             featured
             &&
@@ -2488,12 +2509,13 @@ function showEvent(id){
                   final
 
                   ?`
-                    ${total(m.home_scores)}
+                    ${homeTotal}
                     –
-                    ${total(m.away_scores)}
+                    ${awayTotal}
 
                     <span class="muted">
-                      Final
+                      · ${escapeHtml(winnerLabel)}
+                      · Final
                     </span>
 
                     ${completedPredictionBadge(m,e)}
