@@ -913,7 +913,7 @@ function teamOfMonthHtml(items){
         <div class="guest-month-card">
           <div class="month">${escapeHtml(x.month)}</div>
           <div class="winner">${escapeHtml(x.team)}</div>
-          <span class="score">Low score: ${x.score}</span>
+          <span class="score">Low score: ${x.score} · ${escapeHtml(x.toParLabel||'')}</span>
         </div>
       `).join('')}
     </div>
@@ -1097,6 +1097,23 @@ function renderCurrent(){
 }
 
 
+function formatRelativeToPar(diff){
+
+  const n=Number(diff)||0;
+
+  if(n<0){
+    return `${Math.abs(n)} under`;
+  }
+
+  if(n>0){
+    return `${n} over`;
+  }
+
+  return 'Even par';
+
+}
+
+
 function showSchedule(){
 
   currentView={
@@ -1106,7 +1123,7 @@ function showSchedule(){
 
   const monthlyWinners=
     D.events
-    .map(e=>{
+    .flatMap(e=>{
 
       const ms=
         D.matches
@@ -1130,52 +1147,105 @@ function showSchedule(){
         ms.length!==all.length
       ){
 
-        return null;
+        return [];
 
       }
+
+
+      const c=
+        course(
+          e.course_id
+        );
+
+
+      const roundPar=
+        ((c&&c.holes)||[])
+        .reduce(
+          (n,h)=>
+          n+
+          Number(h.par||0),
+          0
+        );
 
 
       const scores={};
 
 
+      const addTeamScore=
+        (team,score)=>{
+
+          if(!scores[team]){
+
+            scores[team]={
+              score:0,
+              par:0
+            };
+
+          }
+
+
+          scores[team].score+=score;
+          scores[team].par+=roundPar;
+
+        };
+
+
       ms.forEach(m=>{
 
-        scores[m.home_team]=
-          (scores[m.home_team]||0)
-          +
-          total(
-            m.home_scores
-          );
+        addTeamScore(
+          m.home_team,
+          total(m.home_scores)
+        );
 
 
-        scores[m.away_team]=
-          (scores[m.away_team]||0)
-          +
-          total(
-            m.away_scores
-          );
+        addTeamScore(
+          m.away_team,
+          total(m.away_scores)
+        );
 
       });
 
 
-      const winner=
-        Object.entries(scores)
-        .sort(
-          (a,b)=>
-          a[1]-b[1]
-        )[0];
+      const entries=
+        Object.entries(scores);
 
 
-      return winner
-      ?{
-        month:e.month_name,
-        team:winner[0],
-        score:winner[1]
+      if(!entries.length){
+
+        return [];
+
       }
-      :null;
 
-    })
-    .filter(Boolean);
+
+      const lowest=
+        Math.min(
+          ...entries.map(
+            ([,v])=>
+            v.score
+          )
+        );
+
+
+      return entries
+      .filter(
+        ([,v])=>
+        v.score===lowest
+      )
+      .sort(
+        (a,b)=>
+        a[0].localeCompare(b[0])
+      )
+      .map(
+        ([team,v])=>({
+          month:e.month_name,
+          team:team,
+          score:v.score,
+          relative:
+            v.score-v.par
+        })
+      );
+
+    });
 
 
   const winnersHtml=
@@ -1208,6 +1278,8 @@ function showSchedule(){
 
                 <span class="muted">
                   Score: ${w.score}
+                  ·
+                  ${formatRelativeToPar(w.relative)}
                 </span>
 
               </div>

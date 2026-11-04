@@ -105,12 +105,25 @@ exports.handler = async function (event) {
     );
 
     const teamOfMonth=[];
+    const completedEventIds=new Set();
+
     for (const event of eventsRaw) {
       const all=matchesRaw.filter(m=>m.event_id===event.id);
       const finals=all.filter(m=>m.status==="final");
       if (!all.length || finals.length !== all.length) continue;
 
-      const scores=[];
+      const holes=holesByCourse[event.course_id] || [];
+      const roundPar=holes.reduce((n,h)=>n+Number(h.par||0),0);
+      const scoreMap={};
+
+      const addScore=(teamId,score)=>{
+        if(!scoreMap[teamId]){
+          scoreMap[teamId]={score:0,par:0};
+        }
+        scoreMap[teamId].score+=score;
+        scoreMap[teamId].par+=roundPar;
+      };
+
       for (const m of finals) {
         const scoreRow=scoresByMatch[m.id] || {};
         const hs=Array.isArray(scoreRow.home_scores) ? scoreRow.home_scores : [];
@@ -118,20 +131,42 @@ exports.handler = async function (event) {
         const homeTotal=hs.reduce((n,v)=>n+(Number(v)||0),0);
         const awayTotal=as.reduce((n,v)=>n+(Number(v)||0),0);
 
-        scores.push({team:teamName[m.home_team_id] || "Team",score:homeTotal});
-        scores.push({team:teamName[m.away_team_id] || "Team",score:awayTotal});
+        addScore(m.home_team_id,homeTotal);
+        addScore(m.away_team_id,awayTotal);
       }
 
-      scores.sort((a,b)=>a.score-b.score || a.team.localeCompare(b.team));
+      const entries=Object.entries(scoreMap);
+      if(!entries.length) continue;
 
-      if (scores[0]) {
+      const lowest=Math.min(...entries.map(([,v])=>v.score));
+
+      const winners=entries
+        .filter(([,v])=>v.score===lowest)
+        .sort((a,b)=>
+          (teamName[a[0]]||"Team").localeCompare(teamName[b[0]]||"Team")
+        );
+
+      for(const [teamId,v] of winners){
+        const relative=v.score-v.par;
+        const toParLabel=
+          relative<0
+          ?`${Math.abs(relative)} under`
+          :relative>0
+          ?`${relative} over`
+          :"Even par";
+
         teamOfMonth.push({
+          event_id:event.id,
           event_order:Number(event.event_order)||0,
           month:event.month_name,
-          team:scores[0].team,
-          score:scores[0].score
+          team:teamName[teamId] || "Team",
+          score:v.score,
+          relative,
+          toParLabel
         });
       }
+
+      completedEventIds.add(event.id);
     }
 
     teamOfMonth.sort((a,b)=>a.event_order-b.event_order);
@@ -151,9 +186,9 @@ exports.handler = async function (event) {
           eagles,
           birdies,
           pars,
-          completedMonths:teamOfMonth.length
+          completedMonths:completedEventIds.size
         },
-        teamOfMonth:teamOfMonth.map(({month,team,score})=>({month,team,score})),
+        teamOfMonth:teamOfMonth.map(({month,team,score,relative,toParLabel})=>({month,team,score,relative,toParLabel})),
         standings:standingsRows
       })
     };
