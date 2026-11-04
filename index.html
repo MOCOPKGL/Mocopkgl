@@ -162,6 +162,41 @@ a{color:#b40f15;font-weight:800}
   .join-form .two-col{grid-template-columns:1fr}
 }
 
+
+/* PKGL logo — preserve native proportions at every size */
+.site-brand{
+  display:flex;
+  align-items:center;
+  gap:16px
+}
+.site-brand-copy{min-width:0}
+.site-logo{
+  display:block;
+  width:118px;
+  max-width:28vw;
+  height:auto;
+  object-fit:contain;
+  flex:0 0 auto
+}
+.front-logo{
+  text-align:center;
+  margin:0 0 16px
+}
+.front-logo img{
+  display:block;
+  width:min(360px,100%);
+  height:auto;
+  object-fit:contain;
+  margin:0 auto
+}
+@media(max-width:650px){
+  .site-brand{gap:10px}
+  .site-logo{width:82px;max-width:26vw}
+  .site-brand-copy h1{font-size:20px}
+  .site-brand-copy p{font-size:10px}
+  .front-logo img{width:min(320px,100%)}
+}
+
 </style>
 </head>
 
@@ -169,14 +204,22 @@ a{color:#b40f15;font-weight:800}
 
 <header>
   <div class="wrap">
-    <h1>PKGL — Parent-Kid Golf League</h1>
-    <p>League Central · Scores · Standings · Playoff Race</p>
+    <div class="site-brand">
+      <img class="site-logo" src="pkgl-logo.webp" alt="PKGL Parent-Kid Golf League logo">
+      <div class="site-brand-copy">
+        <h1>PKGL — Parent-Kid Golf League</h1>
+        <p>League Central · Scores · Standings · Playoff Race</p>
+      </div>
+    </div>
   </div>
 </header>
 
 <main>
 
 <section id="login" class="card">
+  <div class="front-logo">
+    <img src="pkgl-logo.webp" alt="PKGL Parent-Kid Golf League logo">
+  </div>
   <h2>League Login</h2>
 
   <label for="team">Team</label>
