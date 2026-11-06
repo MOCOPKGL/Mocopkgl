@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#123d2b">
 <link rel="manifest" href="manifest.webmanifest">
 <title>PKGL | Parent-Kid Golf League</title>
+<link rel="stylesheet" href="records-awards.css">
 
 <style>
 :root{
@@ -443,6 +444,8 @@ a{color:#b40f15;font-weight:800}
     <button onclick="showSchedule()">Schedule</button>
 
     <button onclick="showStandings()">Standings</button>
+
+    <button onclick="showRecordsAwards()">Records &amp; Awards</button>
 
     <button onclick="showPlayoffPicture()">Playoff Picture</button>
 
@@ -1116,6 +1119,15 @@ function renderCurrent(){
   ){
 
     showStandings();
+
+  }
+
+  else if(
+    currentView.type===
+    'records-awards'
+  ){
+
+    showRecordsAwards();
 
   }
 
@@ -4807,6 +4819,7 @@ if(
 }
 
 </script>
+<script src="records-awards.js"></script>
 
 </body>
 </html>
