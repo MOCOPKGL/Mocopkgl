@@ -1,0 +1,49 @@
+/* New Records & Awards styles are isolated from existing league screens. */
+.pkgl-awards{max-width:1180px;margin:14px auto 32px;color:#17191d}
+.pkgl-award-hero{background:linear-gradient(115deg,#111317,#262a31 70%,#3a2022);color:#fff;border-top:6px solid #d71920;padding:24px;box-shadow:0 5px 18px #0002}
+.pkgl-award-hero>span{display:block;font-size:11px;color:#f1bcb9;letter-spacing:1.2px;font-weight:900}
+.pkgl-award-hero h2{margin:9px 0;font-size:30px;text-transform:uppercase;font-weight:900}
+.pkgl-award-hero p{color:#e0e2e6;font-size:13px;max-width:650px;margin:8px 0 18px}
+.pkgl-award-counts{display:flex;gap:8px;flex-wrap:wrap}
+.pkgl-award-counts span{border:1px solid #ffffff3d;background:#ffffff14;padding:10px 12px;font-size:12px}
+.pkgl-award-counts b{font-size:19px;margin-right:4px}
+.pkgl-award-section{font-size:19px;text-transform:uppercase;font-weight:900;margin:26px 0 4px;padding-bottom:8px;border-bottom:3px solid #d71920}
+.pkgl-award-sub{font-size:11px;color:#686f78;margin:5px 0 12px}
+.pkgl-award-records,.pkgl-award-boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.pkgl-award-record{border:1px solid #d9dce0;border-top:4px solid #d4a72c;background:#fff;padding:16px;display:flex;flex-direction:column;gap:6px;min-height:146px}
+.pkgl-award-record span{font-size:11px;text-transform:uppercase;font-weight:900;color:#606771}
+.pkgl-award-record>b{font-size:31px;font-weight:900;font-variant-numeric:tabular-nums}
+.pkgl-award-record strong{font-size:14px}
+.pkgl-award-record small{color:#6d737b}
+.pkgl-award-panel{background:#fff;border:1px solid #d9dce0;border-top:4px solid #d71920;padding:15px;min-height:230px}
+.pkgl-award-panel h4{font-size:15px;font-weight:900;text-transform:uppercase;margin:0 0 7px}
+.pkgl-award-desc{font-size:11px;color:#626a73;line-height:1.4;min-height:40px;margin:0 0 10px}
+.pkgl-award-leading{display:grid;grid-template-columns:1fr auto;gap:4px 9px;background:#f5f6f8;padding:12px}
+.pkgl-award-leading>span{grid-column:1/-1;font-size:9px;color:#c21820;font-weight:900;letter-spacing:.7px}
+.pkgl-award-leading strong{font-size:14px;overflow-wrap:anywhere}
+.pkgl-award-leading b{font-size:17px;color:#bd1f26;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.pkgl-award-panel ol{list-style:none;margin:8px 0 0;padding:0}
+.pkgl-award-panel li{display:flex;justify-content:space-between;gap:8px;font-size:11px;padding:6px 0;border-bottom:1px solid #eef0f3;color:#565d66}
+.pkgl-award-panel li b{white-space:nowrap}
+.pkgl-award-none{border:1px dashed #cdd2d9;background:#f6f7f8;padding:16px;color:#6d737c;font-size:12px}
+.pkgl-award-course,.pkgl-award-rivals{background:#fff;border:1px solid #d9dce0}
+.pkgl-award-course-row{display:grid;grid-template-columns:minmax(100px,1fr) minmax(100px,1.2fr) auto auto;gap:10px;align-items:center;padding:14px;border-bottom:1px solid #e7e9ed}
+.pkgl-award-course-row span,.pkgl-award-course-row strong{font-size:13px}
+.pkgl-award-course-row b{font-size:15px;text-align:right;white-space:nowrap}
+.pkgl-award-course-row small{color:#6c737b;white-space:nowrap}
+.pkgl-award-rivals{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.pkgl-award-rival{border-bottom:1px solid #e7e9ed;padding:14px;display:flex;flex-direction:column;gap:7px}
+.pkgl-award-rival strong{font-size:12px;overflow-wrap:anywhere}
+.pkgl-award-rival b{font-size:22px;font-variant-numeric:tabular-nums}
+.pkgl-award-rival small{font-size:11px;color:#676e78}
+.pkgl-award-foot{font-size:11px;line-height:1.6;color:#747b84;margin:24px 2px}
+@media(max-width:650px){
+ .pkgl-award-hero{padding:20px 15px}
+ .pkgl-award-hero h2{font-size:24px}
+ .pkgl-award-records,.pkgl-award-boards{grid-template-columns:1fr}
+ .pkgl-award-record{min-height:0}
+ .pkgl-award-course-row{grid-template-columns:1fr auto;gap:5px}
+ .pkgl-award-course-row strong{grid-column:1;grid-row:2}
+ .pkgl-award-course-row b{grid-column:2;grid-row:1}
+ .pkgl-award-course-row small{grid-column:2;grid-row:2}
+}
